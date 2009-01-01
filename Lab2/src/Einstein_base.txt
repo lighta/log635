@@ -1,0 +1,48 @@
+#Phrases de test
+
+#Peut-être implémenter ces phrases
+#Jean boit. (verbe intransitif, pas de complément)
+
+#Ces phrases ne fonctionnent pas et ne sont pas supposées fonctionner non plus :)
+#Jean boit la café.
+#Jean boit le cafés.
+
+#Ces phrases fonctionnent!
+Jean boit du café.
+La Danoise boit les thés.
+Jean vit dans une maison verte.
+Jean boit un café noir.
+L'Anglais habite dans une maison.
+Le Suédois a des animaux domestiques.
+Le Danois boit de la bière.
+Le Norvégien fume des Pall Mall.
+
+#Phrases exemple pour le TP
+##Max
+Les couleurs de maison sont le rouge, jaune, bleu, vert et blanc.
+##Yumi
+L'Anglais vit dans une maison rouge. 
+##Steven
+Le Suédois a des chiens comme animaux domestiques. 
+##Steven
+La personne qui boit du thé est un Danois. 
+##Yumi
+La maison verte est à gauche de la maison blanche. 
+##Francois
+Le propriétaire de la maison verte boit du café. 
+##Yumi
+La personne qui fume des Pall Mall a des oiseaux. 
+##Francois
+Le propriétaire de la maison jaune fume des Dunhill. 
+##Max
+La personne qui vit dans la maison du centre boit du jus d'orange. 
+Le Norvégien habite la première maison et il vit juste à côté de la maison bleue. L'homme qui fume les Blend vit à côté de celui qui a des chats. L'homme qui a un cheval est le voisin de celui qui fume des Dunhill. Le propriétaire qui fume des Blue Master boit de la bière. L'Allemand fume des Prince. L'homme qui fume des Blend a un voisin qui boit de l'eau.
+
+#La personne que l'anglais boit est dans la maison blanche.
+
+Le Norvégien habite la première maison et il vit juste à côté de la maison bleue. 
+L'homme qui fume les Blend vit à côté de celui qui a des chats. 
+L'homme qui a un cheval est le voisin de celui qui fume des Dunhill. 
+Le propriétaire qui fume des Blue Master boit de la bière. 
+L'Allemand fume des Prince. 
+L'homme qui fume des Blend a un voisin qui boit de l'eau.
