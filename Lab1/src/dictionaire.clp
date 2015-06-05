@@ -1,19 +1,24 @@
 ;;;;;;;;;;;;;;;;;;;
 ; DICTIONNAIRES 
 ;;;;;;;;;;;;;;;;;;;
-;Etat du cadavre
-(deffacts constantes-etat-cadavre
+
+;Rigidite du cadavre
+(deffacts map_rigidite-cadavre
 	(Apres 2 heure du deces on observe la regidite membres superieurs)
 	(Apres 4 heure du deces on observe la regidite membres inferieurs)
 	(Apres 12 heure du deces on observe la regidite complete corps)
+)
+
+;Coloration du cadavre
+(deffacts map_coloration-cadavre
 	(Apres 3 heure du deces on observe une decoloration jaune de la peau)
 	(Apres 4 heure du deces on observe une decoloration verte de la peau)
 	(Apres 5 heure du deces on observe une decoloration mauve de la peau)
 	(Apres 24 heure du deces on observe une decoloration noire de la peau)
 )
 
-;Etat du cadavre
-(deffacts constantes-temperature-endroit
+;Temperature piece du cadavre
+(deffacts map_temperature-difference
 	(Une temperature de 16 Celcius engendre une difference 2 heures)
 	(Une temperature de 18 Celcius engendre une difference 1 heures)
 	(Une temperature de 20 Celcius engendre une difference 0 heures)
@@ -26,37 +31,7 @@
 )
 
 
-;Constante pour determiner les armes accessible par metiers
-; @FIXME, fourchette,crayon, regle ne sont pas dans les autres map atm
-(deffacts map_arme-metier
-	(Metier Cuisinier possede arme (list couteau fourchette))
-	(Metier Professeur possede arme (list crayon regle))
-	(Metier Mecanicien possede arme (list tournevis))
-)
 
-;Constantes pour déterminer si une arme necessite de l experience
-(deffacts map_arme-experience
-	(Arme tournevis necessite Experimente)
-	(Arme Couteau necessite Experimente)
-	(Arme Nourriture_Inmangeable necessite Novice)
-	(Arme Fourchette necessite Novice)
-)
-
-;Constante pour determiner un motif selon la relation avec un autre individu
-(deffacts map_lieu_arme
-  (Armes contenues dans canal-lachine sont (list barre_a_clou))
-  (Armes contenues dans ets-100genie sont (list tournevis))
-	(Armes contenues dans ets-cafeteria sont (list couteau))
-  (Armes contenues dans la-ronde sont (list tournevis))
-  (Armes contenues dans metro-atwater sont (list corde couteau))
-  (Armes contenues dans metro-jean-talon sont (list corde couteau))
-	(Armes contenues dans mont-royal sont (list fusil masse))
-	(Armes contenues dans peel-pub sont (list fusil))
-  (Armes contenues dans universite-de-montreal sont (list tournevis))
-	(Armes contenues dans uqam sont (list tournevis barre_a_clou))
-)
-
-/*
 ;Constante pour determiner un motif selon la relation avec un autre individu
 (deffacts map_relation-motif
 	(Relation Amicale insinue motif (list Chagrin Assistance))
@@ -70,7 +45,6 @@
 	(Intensite Simple_Sur_Point_Vitaux insinue motif (list Assistance Jalousie))
 	(Intensite Membres_Non_Attache insinue motif (list Croyance Folie))
 )
-*/
 
 ;Constantes pour déterminer une arme selon son residu
 (deffacts map_arme-residu
@@ -81,35 +55,74 @@
 	(arme fusil donne residu (list poudre))
 	(arme crayon donne residu (list bois graphite))
 	(arme corde donne residu (list nylon))
+	(arme fourchette donne residu (list fer))
+	(arme regle donne residu (list bois))
+	(arme nourriture_immangeable donne residu (list aucun))
 )
 
 ;Constantes pour déterminer une arme selon son traumatisme creer
 (deffacts map_arme-trauma
+	;(arme masse peut cree trauma (list fer))
 	(arme barre_a_clou peut cree trauma (list Traumatism_cranien Hemorragie Rupture_des_capillaires Hematome Traumatisme_thoracique))
 	(arme tournevis peut cree trauma (list Traumatism_cranien Hemorragie Plaie_de_l'artere Hematome Traumatisme_thoracique))
 	(arme couteau peut cree trauma (list Hemorragie Plaie_de_l'artere Traumatisme_thoracique))
 	(arme fusil peut cree trauma (list Hemorragie Plaie_de_l'artere Traumatisme_thoracique))
 	(arme crayon peut cree trauma (list Hemorragie Traumatism_cranien Hematome Traumatisme_thoracique))
 	(arme corde peut cree trauma (list Taches_rouges_au_niveau_du_blanc_de_l'oeil Rupture_des_capillaires Cyanose_visibles_de_la_face Hemorragie))
+	;(arme fourchette peut cree trauma (list fer))
+	;(arme regle peut cree trauma (list fer))
+	;(arme nourriture_immangeable peut cree trauma (list fer))
 )
 
 ;Constantes pour déterminer une arme selon son traumatisme creer
 (deffacts map_arme-trace
+	;(arme masse laisse trace (list fer))
 	(arme barre_a_clou laisse trace (list Rectangulaire Plaie_profonde Plaie_superficiel Triangulaire Localise))
 	(arme tournevis laisse trace (list Plaie_profonde Perforation Point_d'entre Point_de_sortie Cylindrique Disperse))
 	(arme couteau laisse trace (list Plaie_profonde Perforation Point_d'entre Triangulaire Disperse Courbure))
 	(arme fusil laisse trace (list Plaie_profonde Perforation Point_d'entre Point_de_sortie Disperse Sillon))
 	(arme crayon laisse trace (list Plaie_profonde Perforation Point_d'entre Cylindrique Disperse))
 	(arme corde laisse trace (list Marque_circulaire Localise))
+	;(arme fourchette laisse trace (list fer))
+	;(arme regle laisse trace (list fer))
+	;(arme nourriture_immangeable laisse trace (list fer))
 )
 
-(deffacts types-de-vehicule
-   (vehicule (type motocyclette) (vitesse-moyenne 70))
-   (vehicule (type automobile) (vitesse-moyenne 50))
-   (vehicule (type autobus) (vitesse-moyenne 35))
-   (vehicule (type bicyclette) (vitesse-moyenne 20))
-   (vehicule (type marathon) (vitesse-moyenne 12))
-   (vehicule (type marche) (vitesse-moyenne 7))
+;Constante pour determiner les armes accessible par metiers
+(deffacts map_arme-metier
+	(Metier Cuisinier possede arme (list couteau fourchette nourriture_immangeable))
+	(Metier Professeur possede arme (list crayon regle))
+	(Metier Mecanicien possede arme (list tournevis))
+)
+
+;Constantes pour déterminer si une arme necessite de l experience
+(deffacts map_arme-experience
+	(Arme masse necessite Novice)
+	(Arme barre_a_clou necessite Experimente)
+	(Arme tournevis necessite Experimente)
+	(Arme couteau necessite Experimente)
+	(Arme fusil necessite Novice)
+	(Arme crayon necessite Experimente)
+	(Arme corde necessite Experimente)
+	(Arme fourchette necessite Novice)
+	(Arme regle necessite Experimente)
+	(Arme nourriture_immangeable necessite Novice)
+)
+
+;Constante pour determiner un motif selon la relation avec un autre individu
+(deffacts map_lieu_arme
+	(Armes contenues dans canal-lachine sont (list barre_a_clou))
+	(Armes contenues dans ets-100genie sont (list tournevis))
+	(Armes contenues dans ets-cafeteria sont (list couteau))
+	(Armes contenues dans la-ronde sont (list tournevis nourriture_immangeable))
+	(Armes contenues dans metro-atwater sont (list corde couteau))
+	(Armes contenues dans metro-jean-talon sont (list corde couteau))
+	(Armes contenues dans mont-royal sont (list fusil masse))
+	(Armes contenues dans peel-pub sont (list fusil nourriture_immangeable))
+	(Armes contenues dans universite-de-montreal sont (list tournevis))
+	(Armes contenues dans uqam sont (list tournevis barre_a_clou))
+	
+	(Armes contenues dans stade-olympique sont (list nourriture_immangeable))
 )
 
 
@@ -147,3 +160,13 @@
    (lieu (nom ets-coop) (lat 45.4953) (long 73.5629))
    (lieu (nom ets-100genie) (lat 45.4953) (long 73.5629))
 )
+
+(deffacts types-de-vehicule
+   (vehicule (type motocyclette) (vitesse-moyenne 70))
+   (vehicule (type automobile) (vitesse-moyenne 50))
+   (vehicule (type autobus) (vitesse-moyenne 35))
+   (vehicule (type bicyclette) (vitesse-moyenne 20))
+   (vehicule (type marathon) (vitesse-moyenne 12))
+   (vehicule (type marche) (vitesse-moyenne 7))
+)
+
