@@ -302,7 +302,7 @@
 ;l'heure du crime en fait
 (defrule heure-deces
 	(declare (salience 150))
-	(Le corps de Francois ete decouvers a ?heureDeces heure)
+	(Le corps de ?nomCadavre ete decouvers a ?heureDeces heure)
 	(Apres ?heureMarque heures on observe des marques physiques)
 	(Difference d'heure du a la temperature est de ?hrsTemp)
 	=>
