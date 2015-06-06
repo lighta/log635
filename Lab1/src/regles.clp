@@ -6,10 +6,8 @@
 ; TEMPLATES 
 ;;;;;;;;;;;;;;;;;;;
 
-/*
 ;Template pour motif-relation-personne
 (deftemplate personnage-relation (slot of) (slot is))
-*/
 
 ;Template pour personne-arme_acces
 (deftemplate personnage-arme_acces (slot of) (slot is))
@@ -21,6 +19,7 @@
 (deftemplate vehicule (slot type) (slot vitesse-moyenne))
 
 ;Template pour suspect-par-arme-et-motif
+(deftemplate suspect-par-arme (slot is) (slot with))
 (deftemplate suspect-par-arme-et-motif (slot is) (slot with))
 
 ;Template pour personne
@@ -86,7 +85,7 @@
 	(arme ?arme peut cree trauma $?list)
 	(test (member$ ?trauma ?list))
 	=>
-	(printout t "L'arme du crime (selon trauma "?trauma") peu etre le/la " ?arme "." crlf)
+	;(printout t "L'arme du crime (selon trauma "?trauma") peu etre le/la " ?arme "." crlf)
 	(assert (arme-possible-par-trauma ?arme))
 )
 
@@ -96,7 +95,7 @@
 	(arme ?arme donne residu $?list)
 	(test (member$ ?residu ?list))
 	=>
-	(printout t "L'arme du crime (selon residu "?residu") peu etre le/la " ?arme "." crlf)
+	;(printout t "L'arme du crime (selon residu "?residu") peu etre le/la " ?arme "." crlf)
 	(assert (arme-possible-par-residu ?arme))
 )
 
@@ -106,7 +105,7 @@
 	(arme ?arme laisse trace $?list)
 	(test (member$ ?trace ?list))
 	=>
-	(printout t "L'arme du crime (selon trace "?trace") peu etre le/la " ?arme "." crlf)
+	;(printout t "L'arme du crime (selon trace "?trace") peu etre le/la " ?arme "." crlf)
 	(assert (arme-possible-par-trace ?arme))
 )
 
@@ -138,6 +137,7 @@
 (defrule personnage-location-determine-armeAcces
 	(a-ete-vu (nom ?nom) (etait-a $?lieux) (a-heure $?heures))
 	(Armes contenues dans ?lieu sont $?list)
+	;(lieu (armes $?list))
   (test (member$ ?lieu $?lieux))
   (L'Heure du deces reel ?hDeces heures)
 	=>
@@ -172,8 +172,8 @@
 	(Personnage ?personnage est une personne ?experience)
 	(Arme ?arme necessite ?exp)
 	(personnage-arme_acces (of ?personnage) (is ?arme))
-	(test(= (str-compare ?experience "Inexperimente") 0))
-	(test(= (str-compare ?exp "Aucune_experience") 0))
+	;(test(= (str-compare ?experience "Inexperimente") 0)) ;undefined should work for novice arm
+	(test(= (str-compare ?exp "Novice") 0))
 	=>
 	(printout t ?personnage " peux utiliser " ?arme " puisqu il est " ?experience "." crlf)
 	(assert (personnage-arme_utilisable (of ?personnage)(is ?arme)))
@@ -181,13 +181,13 @@
 
 
 ;Arme potentiel intersec PersonneArmeUtilisable !
-(defrule suspect-par-arme-et-motif
+(defrule suspect-par-arme
 	(declare (salience 19) )
 	(arme-potentiel ?arme)
 	(personnage-arme_utilisable (of ?personnage) (is ?arme))
 	=>
-	(printout t "(potentiel+arme_utilisable) Le crime pourrait avoir ete fait par " ?personnage " avec le/la " ?arme "." crlf)
-	(assert (suspect-par-arme-et-motif (is ?personnage) (with ?arme)))
+	(printout t "Le crime pourrait avoir ete fait par (selon arme) " ?personnage " avec le/la " ?arme "." crlf)
+	(assert (suspect-par-arme (is ?personnage) (with ?arme)))
 )
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -204,7 +204,7 @@
 	(bind ?i (length$ ?list))
 	(while (> ?i 0) do
 		(bind ?motifPossible (nth$ ?i $?list))
-		(printout t "Le motif du crime (selon la relation) peut-etre le/la " ?motifPossible "." crlf)
+		;(printout t "Le motif du crime (selon la relation) peut-etre le/la " ?motifPossible "." crlf)
 		(assert (motif-possible-par-relation ?motifPossible))
 		(bind ?i (- ?i 1))
 	)
@@ -218,7 +218,7 @@
 	(bind ?i (length$ ?list))
 	(while (> ?i 0) do
 		(bind ?motifPossible (nth$ ?i $?list))
-		(printout t "Le motif (selon l'intensite) peut-etre le/la " ?motifPossible "." crlf)
+		;(printout t "Le motif (selon l'intensite) peut-etre le/la " ?motifPossible "." crlf)
 		(assert (motif-possible-par-intensite ?motifPossible))
 		(bind ?i (- ?i 1))
 	)
@@ -237,6 +237,13 @@
 	(assert (personnage-relation (of ?personnage)(is ?motif)))
 )
 
+(defrule suspect-par-arme-et-motif
+	(personnage-relation (of ?personnage)(is ?motif))
+	(suspect-par-arme (is ?personnage) (with ?arme))
+	=>
+	(printout t "Le crime pourrait avoir ete fait par " ?personnage " (selon motif+arme) avec l'arme " ?arme " et le motif " ?motif "." crlf)
+	(assert (suspect-par-arme-et-motif (is ?personnage) (with ?arme)))
+)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -249,7 +256,7 @@
 	?fait1 <- (Apres ?temps heure du deces on observe une decoloration ?couleur2 de la peau)
 	(test (neq ?couleur ?couleur2))
 	=>
-	(printout t "retract temps " ?temps crlf) ;trace
+	;(printout t "retract temps " ?temps crlf) ;trace
 	(retract ?fait1)
 )
 
@@ -261,7 +268,7 @@
 	?fait1 <- (Apres ?temps heure du deces on observe la regidite ?type3 ?type4)
 	(test  (not(and (eq ?type1 ?type3) (eq ?type2 ?type4))))
 	=>
-	(printout t "retract rigidite " ?type3 " " ?type4 crlf) ;trace
+	;(printout t "retract rigidite " ?type3 " " ?type4 crlf) ;trace
 	(retract ?fait1)
 )
 
@@ -272,7 +279,7 @@
 	?fait1 <- (Apres ?temps2 heure du deces on observe une decoloration ?couleur de la peau)
 	(test (>= ?temps1 ?temps2))
 	=>
-	(printout t "apres " ?temps1 " marques physiques 1" crlf) ;trace
+	;(printout t "apres " ?temps1 " marques physiques 1" crlf) ;trace
 	(assert (Apres ?temps1 heures on observe des marques physique))
 )
 
@@ -283,7 +290,7 @@
 	?fait1 <- (Apres ?temps2 heure du deces on observe la regidite ?type ?type2)
 	(test (>= ?temps1 ?temps2))
 	=>
-	(printout t "apres " ?temps1 " marques physiques 2" crlf) ;test
+	;(printout t "apres " ?temps1 " marques physiques 2" crlf) ;test
 	(assert (Apres ?temps1 heures on observe des marques physiques))
 )
 
@@ -302,13 +309,13 @@
 ;l'heure du crime en fait
 (defrule heure-deces
 	(declare (salience 150))
-	(Le corps de ?nomCadavre ete decouvers a ?heureDeces heure)
+	(Le corps de ?nomCadavre ete decouvers a ?heureDecouverte heure)
 	(Apres ?heureMarque heures on observe des marques physiques)
 	(Difference d'heure du a la temperature est de ?hrsTemp)
 	=>
-	(bind ?hDeces (- ?heureDeces (- 24 (+ (- ?heureDeces ?heureMarque) ?hrsTemp))))
+	(bind ?hDeces (- ?heureDecouverte (- 24 (+ (- ?heureDecouverte ?heureMarque) ?hrsTemp))))
 	(assert (L'Heure du deces reel ?hDeces heures))
-	(printout t "L'heure du deces est " ?hDeces "h" crlf)
+	(printout t "On a trouve le corp de "?nomCadavre" a " ?heureDecouverte "h, neanmoins l'heure du deces est " ?hDeces "h" crlf)
 )
 
 
@@ -320,7 +327,7 @@
 (defrule suspect-vitesse-la-plus-rapide
 	(personne-vehicule (nom ?nom) (utilise-vehicule $?vehicules))
 	=>
-	(printout t ?nom " etait pouvait utiliser ces vehicules: " ?vehicules crlf)
+	(printout t ?nom " pouvait utiliser ces vehicules: " ?vehicules crlf)
 	; Calculer seulement la vitesse avec le vehicule le plus rapide. Pas besoin de verifier la marche si la personne a une moto
 	(bind ?vitesse-la-plus-rapide 0)
 	(foreach ?un-vehicule ?vehicules
@@ -329,7 +336,7 @@
 		(bind ?vitesse-un-vehicule (?query-result getString vitesse))
 		(if (> ?vitesse-un-vehicule ?vitesse-la-plus-rapide) then (bind ?vitesse-la-plus-rapide ?vitesse-un-vehicule))
 	)
-	(printout t "La vitesse la plus rapide a laquelle " ?nom " peut voyager est " ?vitesse-la-plus-rapide crlf)
+	(printout t "La vitesse la plus rapide a laquelle " ?nom " peut voyager est " ?vitesse-la-plus-rapide "Km/h" crlf)
 	(assert (vitesse-la-plus-rapide ?nom ?vitesse-la-plus-rapide))
 )
 

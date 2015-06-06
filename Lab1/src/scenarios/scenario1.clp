@@ -12,8 +12,8 @@
 	(Personnage Marc est Cuisinier)
 	(Personnage Marc est une personne Experimente)
   
-  (Personnage Bob est Mecanicien)
-	(Personnage Bob est une personne Experimente)
+	(Personnage Bob est Mecanicien)
+	(Personnage Bob est une personne Inexperimente)
 )
 
 
