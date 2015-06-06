@@ -1,14 +1,15 @@
-;scenario de Max
+;scenario de test (validation)
 
 ; Enumeration des faits.
 (deffacts personnages
 	(Personnage Marc avait une relation Amicale avec la victime)
+	
+  
 	(Personnage Marc est Cuisinier)
 	(Personnage Marc est une personne Experimente)
   
-	(Personnage Bob avait une relation Amicale avec la victime)
 	(Personnage Bob est Mecanicien)
-	(Personnage Bob est une personne Experimente)
+	(Personnage Bob est une personne Inexperimente)
 )
 
 
