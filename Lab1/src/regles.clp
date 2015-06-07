@@ -130,7 +130,7 @@
 	(bind ?i (length$ ?list))
 	(while (> ?i 0) do
 		(bind ?arme (nth$ ?i $?list))
-		(printout t ?personnage " avait acces a " ?arme " puisqu il est " ?metier "." crlf)
+		;(printout t ?personnage " avait acces a " ?arme " puisqu il est " ?metier "." crlf)
 		(assert (personnage-arme_acces (of ?personnage)(is ?arme)))
 		(bind ?i (- ?i 1))
 	)
@@ -152,7 +152,7 @@
 		; pour faire le crime. On lui assigne toutes les armes du lieu
 		(for (bind ?j 1) (<= ?j (length$ ?list)) (++ ?j)
 			(bind ?arme-disponible (nth$ ?j ?list))
-			(printout t ?nom " avait acces avant le crime a l'arme " ?arme-disponible " dans le lieu " ?lieu "." crlf)
+			;(printout t ?nom " avait acces avant le crime a l'arme " ?arme-disponible " dans le lieu " ?lieu "." crlf)
 			(assert (personnage-arme_acces (of ?nom)(is ?arme-disponible)))
 		)
 	)
@@ -165,7 +165,7 @@
 	(personnage-arme_acces (of ?personnage) (is ?arme))
 	(test(= (str-compare ?experience "Experimente") 0))
 	=>
-	(printout t ?personnage " peux utiliser " ?arme " puisqu il est " ?experience "." crlf)
+	;(printout t ?personnage " peux utiliser " ?arme " puisqu il est " ?experience "." crlf)
 	(assert (personnage-arme_utilisable (of ?personnage)(is ?arme)))
 )
 
@@ -177,7 +177,7 @@
 	;(test(= (str-compare ?experience "Inexperimente") 0)) ;undefined should work for novice arm
 	(test(= (str-compare ?exp "Novice") 0))
 	=>
-	(printout t ?personnage " peux utiliser " ?arme " puisqu il est " ?experience "." crlf)
+	;(printout t ?personnage " peux utiliser " ?arme " puisqu il est " ?experience "." crlf)
 	(assert (personnage-arme_utilisable (of ?personnage)(is ?arme)))
 )
 
@@ -232,11 +232,13 @@
 	(Le corps de la victime a ete trouve dans l'etat suivant: ?etat)
 	(Relation ?relation insinue motif $?list2)
 	(Intensite ?etat insinue motif $?list1)
-	(intersection$ $?list1 $?list2)
+	;(intersection$ $?list1 $?list2)
 	=>
 	(bind ?motif (intersection$ $?list1 $?list2))
-	(printout t "Le motif (selon l'intensite et la relation) associe a " ?personnage " est le/la" ?motif "." crlf)
-	(assert (personnage-relation (of ?personnage)(is ?motif)))
+	(if (neq 0 (length$ ?motif)) then
+		(printout t "Le motif (selon l'intensite et la relation) associe a " ?personnage " est le/la" ?motif "." crlf)
+		(assert (personnage-relation (of ?personnage)(is ?motif)))
+	)
 )
 
 (defrule suspect-par-arme-et-motif
@@ -302,7 +304,7 @@
 	(La temperature de la piece est de ?degre Celcius)
 	(Une temperature de ?degre Celcius engendre une difference ?hrs heures)
 	=>
-	(printout t "Difference d'heure due a la temperature " ?hrs crlf) ;trace
+	;(printout t "Difference d'heure due a la temperature " ?hrs crlf) ;trace
 	(assert (Difference d'heure du a la temperature est de ?hrs))
 )
 
@@ -329,7 +331,7 @@
 (defrule suspect-vitesse-la-plus-rapide
 	(personne-vehicule (nom ?nom) (utilise-vehicule $?vehicules))
 	=>
-	(printout t ?nom " pouvait utiliser ces vehicules: " ?vehicules crlf)
+	;(printout t ?nom " pouvait utiliser ces vehicules: " ?vehicules crlf)
 	; Calculer seulement la vitesse avec le vehicule le plus rapide. Pas besoin de verifier la marche si la personne a une moto
 	(bind ?vitesse-la-plus-rapide 0)
 	(foreach ?un-vehicule ?vehicules
@@ -338,7 +340,7 @@
 		(bind ?vitesse-un-vehicule (?query-result getString vitesse))
 		(if (> ?vitesse-un-vehicule ?vitesse-la-plus-rapide) then (bind ?vitesse-la-plus-rapide ?vitesse-un-vehicule))
 	)
-	(printout t "La vitesse la plus rapide a laquelle " ?nom " peut voyager est " ?vitesse-la-plus-rapide "Km/h" crlf)
+	;(printout t "La vitesse la plus rapide a laquelle " ?nom " peut voyager est " ?vitesse-la-plus-rapide "Km/h" crlf)
 	(assert (vitesse-la-plus-rapide ?nom ?vitesse-la-plus-rapide))
 )
 
@@ -371,8 +373,8 @@
 			)
 		)
 	)
-	(printout t ?nom " a ete vu pour la derniere fois avant le crime a " ?lieu-avant-crime " a " ?heure-avant-crime crlf)
-	(printout t ?nom " a ete vu pour la premiere fois apres le crime a " ?lieu-apres-crime " a " ?heure-apres-crime crlf)
+	;(printout t ?nom " a ete vu pour la derniere fois avant le crime a " ?lieu-avant-crime " a " ?heure-avant-crime crlf)
+	;(printout t ?nom " a ete vu pour la premiere fois apres le crime a " ?lieu-apres-crime " a " ?heure-apres-crime crlf)
 	(assert (a-ete-vu-avant-crime ?nom ?lieu-avant-crime ?heure-avant-crime))
 	(assert (a-ete-vu-apres-crime ?nom ?lieu-apres-crime ?heure-apres-crime))
 )
@@ -393,7 +395,7 @@
 	=>
 	(bind ?hDeces (str-cat ?hDeces "h00"))  ; format 12h00
 	(bind ?minutes-apres-crime (- (convertir-en-minutes ?heure-apres-crime) (convertir-en-minutes ?hDeces)))
-	(printout t ?nom " avait " ?minutes-apres-crime "min pour echapper au lieu du crime" crlf)
+	;(printout t ?nom " avait " ?minutes-apres-crime "min pour echapper au lieu du crime" crlf)
 	(assert (temps-apres-crime ?nom ?minutes-apres-crime))
 )
 
@@ -406,7 +408,7 @@
 	(lieu (nom ?lieu-avant-crime) (lat ?lat-suspect) (long ?long-suspect))
 	=>
 	(bind ?distance (distance-entre-deux-points ?lat-crime ?long-crime ?lat-suspect ?long-suspect))
-	(printout t "Le suspect " ?nom " devait parcourir " ?distance "km pour aller au lieu du crime" crlf)
+	;(printout t "Le suspect " ?nom " devait parcourir " ?distance "km pour aller au lieu du crime" crlf)
 	(assert (distance-avant-crime ?nom ?distance))
 )
 
@@ -419,7 +421,7 @@
 	(lieu (nom ?lieu-apres-crime) (lat ?lat-suspect) (long ?long-suspect))
 	=>
 	(bind ?distance (distance-entre-deux-points ?lat-crime ?long-crime ?lat-suspect ?long-suspect))
-	(printout t "Le suspect " ?nom " devait parcourir " ?distance "km pour echapper au lieu du crime" crlf)
+	;(printout t "Le suspect " ?nom " devait parcourir " ?distance "km pour echapper au lieu du crime" crlf)
 	(assert (distance-apres-crime ?nom ?distance))
 )
 
@@ -428,16 +430,14 @@
 	(distance-avant-crime ?nom ?distance)
 	(vitesse-la-plus-rapide ?nom ?vitesse-la-plus-rapide)
 	=>
-	(printout t ?nom " devait parcourir " ?distance "km en " ?minutes " minutes pour se rendre au lieu du crime" crlf)
 	(bind ?vitesse-necessaire (/ (round (* 100 (/ ?distance (/ ?minutes 60)))) 100))
-	(printout t "La vitesse necessaire est de " ?vitesse-necessaire " km/h" crlf)
+	(printout t ?nom " devait parcourir " ?distance "km en " ?vitesse-necessaire " km/h pour se rendre au lieu du crime" crlf)
+	;(printout t "La vitesse necessaire est de " ?vitesse-necessaire " km/h" crlf)
 
 	(if (> ?vitesse-necessaire ?vitesse-la-plus-rapide) then
-		(printout t "La vitesse maximale de " ?nom " est de " ?vitesse-la-plus-rapide
-			"km/h; il n'aurait pas pu se rendre a temps." crlf)
+		;(printout t "La vitesse maximale de " ?nom " est de " ?vitesse-la-plus-rapide "km/h; il n'aurait pas pu se rendre a temps." crlf)
 	else
-		(printout t ?nom " aurait pu se rendre sur les lieux du crime car sa vitesse max est de " 
-			?vitesse-la-plus-rapide "km/h." crlf)
+		;(printout t ?nom " aurait pu se rendre sur les lieux du crime car sa vitesse max est de " ?vitesse-la-plus-rapide "km/h." crlf)
 		(assert (aurait-pu-se-rendre ?nom))
 	)
 )
@@ -447,16 +447,14 @@
 	(distance-apres-crime ?nom ?distance)
 	(vitesse-la-plus-rapide ?nom ?vitesse-la-plus-rapide)
 	=>
-	(printout t ?nom " devait parcourir " ?distance "km en " ?minutes " minutes pour echapper au lieu du crime" crlf)
 	(bind ?vitesse-necessaire (/ (round (* 100 (/ ?distance (/ ?minutes 60)))) 100))
-	(printout t "La vitesse necessaire est de " ?vitesse-necessaire " km/h" crlf)
+	(printout t ?nom " devait parcourir " ?distance "km en " ?vitesse-necessaire " minutes pour echapper au lieu du crime" crlf)
+	;(printout t "La vitesse necessaire est de " ?vitesse-necessaire " km/h" crlf)
 
 	(if (> ?vitesse-necessaire ?vitesse-la-plus-rapide) then
-		(printout t "La vitesse maximale de " ?nom " est de " ?vitesse-la-plus-rapide
-			"km/h; il n'aurait pas pu s'echapper a temps." crlf)
+		;(printout t "La vitesse maximale de " ?nom " est de " ?vitesse-la-plus-rapide "km/h; il n'aurait pas pu s'echapper a temps." crlf)
 	else
-		(printout t ?nom " aurait pu s'echapper des lieux du crime car sa vitesse max est de " 
-			?vitesse-la-plus-rapide "km/h." crlf)
+		;(printout t ?nom " aurait pu s'echapper des lieux du crime car sa vitesse max est de " ?vitesse-la-plus-rapide "km/h." crlf)
 		(assert (aurait-pu-sechapper ?nom))
 	)
 )
@@ -481,7 +479,7 @@
 	=>
 	(printout t "Le meutrier trouve est " ?nom " avec arme " ?arme crlf)
 	(assert (meutrier ?nom))
-  (halt) ; pas besoin de continuer a rouler si on a la reponse :D
+	(halt) ; pas besoin de continuer a rouler si on a la reponse :D
 )
 
 
