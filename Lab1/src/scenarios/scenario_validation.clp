@@ -2,8 +2,8 @@
 
 ; Enumeration des faits.
 (deffacts personnages
-	(Personnage Marc avait une relation Amicale avec la victime)
-	
+	(Personnage Marc avait une relation Neutre avec la victime)
+	(Personnage Bob avait une relation Hostile avec la victime)
   
 	(Personnage Marc est Cuisinier)
 	(Personnage Marc est une personne Experimente)
