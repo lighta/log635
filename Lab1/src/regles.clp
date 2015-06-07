@@ -53,10 +53,10 @@
 
 ; Chargement d'un scenarioen particulier, commentez celui que vous voulez
 ;(batch "scenarios/scenario_validation.clp")
-(batch "scenarios/scenario1.clp")
+;(batch "scenarios/scenario1.clp")
 ;(batch "scenarios/scenario2.clp")
 ;(batch "scenarios/scenario3.clp")
-;(batch "scenarios/scenario4.clp")
+(batch "scenarios/scenario4.clp")
 
 
 
@@ -469,8 +469,6 @@
 	(printout t "Selon les temoignages, " ?nom " aurait pu etre sur les lieux du crime." crlf)
 	(assert (suspect-pouvait-etre-sur-lieux ?nom))
 )
-
-
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; REGLE FINALE combine arme, motifs et transport

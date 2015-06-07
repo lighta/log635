@@ -60,5 +60,5 @@
 (deffacts vehicules
   (personne-vehicule (nom Paul) (utilise-vehicule marche autobus))
   (personne-vehicule (nom Frank) (utilise-vehicule marche motocyclette))
-  (personne-vehicule (nom Benoit) (utilise-vehicule automobile))
-  (personne-vehicule (nom Pierre) (utilise-vehicule automobile))
+  (personne-vehicule (nom Benoit) (utilise-vehicule marche autobus))
+  (personne-vehicule (nom Pierre) (utilise-vehicule marche motocyclette))
