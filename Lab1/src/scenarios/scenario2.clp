@@ -16,7 +16,7 @@
 	(Personnage Jean est une personne Novice)
 	(a-ete-vu (nom Jean)
      (etait-a universite-de-montreal ets-coop uqam ets-100genie chinatown)
-     (a-heure 09h30 12h00 16h00 19h00 21h00)
+     (a-heure 09h00 12h00 16h00 19h00 21h00)
 	)
 	(personne-vehicule (nom Jean) (utilise-vehicule marche autobus automobile))
 	
@@ -25,7 +25,7 @@
 	(Personnage Eric est une personne Novice)
 	(a-ete-vu (nom Eric)
      (etait-a metro-angrignon ets-cafeteria peel-pub hotel-de-ville metro-angrignon)
-     (a-heure 09h30 12h00 16h00 19h00 21h00)
+     (a-heure 09h00 12h00 16h00 19h00 21h00)
 	)
 	(personne-vehicule (nom Eric) (utilise-vehicule marche automobile))
 	
@@ -59,7 +59,7 @@
 	(a-ete-vu (nom Julie)
      (etait-a ets-cafeteria ets-cafeteria ets-cafeteria uqam metro-berri-uqam)
      (a-heure 08h30 12h00 17h15 21h30 22h30)
-	)
+	) 
 	(personne-vehicule (nom Julie) (utilise-vehicule marche autobus))
 )
 
