@@ -85,8 +85,8 @@
 ;Constante pour determiner les armes accessible par metiers
 (deffacts map_arme-metier
 	(Metier Cuisinier possede arme (list couteau fourchette))
-	(Metier Professeur possede arme (list crayon corde))
-	(Metier Mecanicien possede arme (list tournevis))
+	(Metier Professeur possede arme (list crayon corde fusil))
+	(Metier Mecanicien possede arme (list tournevis masse corde))
 )
 
 ;Constantes pour déterminer si une arme necessite de l experience
