@@ -87,6 +87,7 @@
 	(Metier Cuisinier possede arme (list couteau fourchette))
 	(Metier Professeur possede arme (list crayon corde fusil))
 	(Metier Mecanicien possede arme (list tournevis masse corde))
+	(Metier Agent_Securite possede arme (list corde fusil))
 )
 
 ;Constantes pour déterminer si une arme necessite de l experience
