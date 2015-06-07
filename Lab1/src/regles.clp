@@ -54,8 +54,8 @@
 
 ; Chargement d'un scenarioen particulier, commentez celui que vous voulez
 ;(batch "scenarios/scenario_validation.clp")
-(batch "scenarios/scenario1.clp")
-;(batch "scenarios/scenario2.clp")
+;(batch "scenarios/scenario1.clp")
+(batch "scenarios/scenario2.clp")
 ;(batch "scenarios/scenario3.clp")
 ;(batch "scenarios/scenario4.clp")
 
