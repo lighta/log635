@@ -53,11 +53,11 @@
 ;;;;;;;;;;;;;;;
 
 ; Chargement d'un scenarioen particulier, commentez celui que vous voulez
-(batch "scenarios/scenario_validation.clp")
+;(batch "scenarios/scenario_validation.clp")
 ;(batch "scenarios/scenario1.clp")
 ;(batch "scenarios/scenario2.clp")
 ;(batch "scenarios/scenario3.clp")
-;(batch "scenarios/scenario4.clp")
+(batch "scenarios/scenario4.clp")
 
 
 
@@ -207,7 +207,7 @@
 	(bind ?i (length$ ?list))
 	(while (> ?i 0) do
 		(bind ?motifPossible (nth$ ?i $?list))
-		(printout t "Le motif possible de " ?personnage " peut etre le/la " ?motifPossible "." crlf)
+		;(printout t "Le motif possible de " ?personnage " peut etre le/la " ?motifPossible "." crlf)
 		(assert (motif-possible-par-relation ?personnage ?motifPossible))
 		(bind ?i (- ?i 1))
 	)
@@ -221,7 +221,7 @@
 	(bind ?i (length$ ?list))
 	(while (> ?i 0) do
 		(bind ?motifPossible (nth$ ?i $?list))
-		(printout t "Le motif possible selon l'intensite du crime peut etre le/la " ?motifPossible "." crlf)
+		;(printout t "Le motif possible selon l'intensite du crime peut etre le/la " ?motifPossible "." crlf)
 		(assert (motif-possible-par-intensite ?motifPossible))
 		(bind ?i (- ?i 1))
 	)
@@ -443,7 +443,7 @@
 	(vitesse-la-plus-rapide ?nom ?vitesse-la-plus-rapide)
 	=>
 	(bind ?vitesse-necessaire (/ (round (* 100 (/ ?distance (/ ?minutes 60)))) 100))
-	(printout t ?nom " devait parcourir " ?distance "km en " ?vitesse-necessaire " minutes pour echapper au lieu du crime" crlf)
+	(printout t ?nom " devait parcourir " ?distance "km en " ?vitesse-necessaire " km/h pour echapper au lieu du crime" crlf)
 	;(printout t "La vitesse necessaire est de " ?vitesse-necessaire " km/h" crlf)
 
 	(if (> ?vitesse-necessaire ?vitesse-la-plus-rapide) then
