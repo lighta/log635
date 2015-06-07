@@ -62,3 +62,4 @@
   (personne-vehicule (nom Frank) (utilise-vehicule marche motocyclette))
   (personne-vehicule (nom Benoit) (utilise-vehicule automobile))
   (personne-vehicule (nom Pierre) (utilise-vehicule automobile))
+)

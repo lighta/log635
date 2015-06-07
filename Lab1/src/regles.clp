@@ -232,7 +232,7 @@
 	(Le corps de la victime a ete trouve dans l'etat suivant: ?etat)
 	(Relation ?relation insinue motif $?list2)
 	(Intensite ?etat insinue motif $?list1)
-	;(intersection$ $?list1 $?list2)
+	(intersection$ $?list1 $?list2)
 	=>
 	(bind ?motif (intersection$ $?list1 $?list2))
 	(printout t "Le motif (selon l'intensite et la relation) associe a " ?personnage " est le/la" ?motif "." crlf)
