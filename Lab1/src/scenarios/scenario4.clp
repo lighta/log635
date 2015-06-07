@@ -22,8 +22,8 @@
 	(Personnage Levis avait une relation Hostile avec la victime)
 	(Personnage Levis est une personne Experimente)
 	
-	(Personnage Cardinal est Professeur)
-	(Personnage Cardinal avait une relation Hostile avec la victime)
+	(Personnage Cardinal est Agent_Securite)
+	(Personnage Cardinal avait une relation Neutre avec la victime)
 	(Personnage Cardinal est une personne Experimente)
 )
 
@@ -33,7 +33,7 @@
 	;observations results
 	(lieu-du-crime metro-atwater)
 	(Le corps de Jean ete decouvers a 22 heure)
-	(Le corps de la victime a ete trouve dans l'etat suivant: Membres_Non_Attache)
+	(Le corps de la victime a ete trouve dans l'etat suivant: Multitude_De_Coups)
 	(La temperature de la piece est de 32 Celcius)
 	
 	;autopsie results
@@ -45,7 +45,7 @@
 	(trauma-vu Hematome)
 	(trauma-vu Plaie_de_l'artere)
 	(trauma-vu Traumatisme_thoracique)
-	(trace-trouve Cylindrique)
+	(trace-trouve Perforation)
 	(trace-trouve Perforation)
 	(trace-trouve Point_d'entre)
 )
@@ -64,6 +64,12 @@
   (a-ete-vu (nom Pierre)
      (etait-a uqam ets-cafeteria ets-cafeteria) 
      (a-heure 7h00                   11h30         14h00))
+  (a-ete-vu (nom Levis)
+     (etait-a uqam ets-cafeteria ets-cafeteria) 
+     (a-heure 10h00                   11h30         14h00))
+  (a-ete-vu (nom Cardinal)
+     (etait-a metro-berri-uqam peel-pub ets-cafeteria) 
+     (a-heure 7h00                   11h30         22h00))
 )
 
 (deffacts vehicules
@@ -72,4 +78,5 @@
   (personne-vehicule (nom Benoit) (utilise-vehicule automobile))
   (personne-vehicule (nom Pierre) (utilise-vehicule automobile))
   (personne-vehicule (nom Levis) (utilise-vehicule autobus))
+  (personne-vehicule (nom Cardinal) (utilise-vehicule autobus))
 )
