@@ -43,20 +43,21 @@
 )
 
 ; Chargement du monde commun
-(batch "dictionaire.clp")
+(batch "dictionaire.clp") 
 ;chargement des fonctions
 (batch "func_and_query.clp")
+
 
 ;;;;;;;;;;;;;;;
 ;; SCENARIO
 ;;;;;;;;;;;;;;;
 
 ; Chargement d'un scenarioen particulier, commentez celui que vous voulez
-;(batch "scenarios/scenario_validation.clp")
+(batch "scenarios/scenario_validation.clp")
 ;(batch "scenarios/scenario1.clp")
 ;(batch "scenarios/scenario2.clp")
 ;(batch "scenarios/scenario3.clp")
-(batch "scenarios/scenario4.clp")
+;(batch "scenarios/scenario4.clp")
 
 
 
@@ -206,8 +207,8 @@
 	(bind ?i (length$ ?list))
 	(while (> ?i 0) do
 		(bind ?motifPossible (nth$ ?i $?list))
-		;(printout t "Le motif du crime (selon la relation) peut-etre le/la " ?motifPossible "." crlf)
-		(assert (motif-possible-par-relation ?motifPossible))
+		(printout t "Le motif possible de " ?personnage " peut etre le/la " ?motifPossible "." crlf)
+		(assert (motif-possible-par-relation ?personnage ?motifPossible))
 		(bind ?i (- ?i 1))
 	)
 )
@@ -220,7 +221,7 @@
 	(bind ?i (length$ ?list))
 	(while (> ?i 0) do
 		(bind ?motifPossible (nth$ ?i $?list))
-		;(printout t "Le motif (selon l'intensite) peut-etre le/la " ?motifPossible "." crlf)
+		(printout t "Le motif possible selon l'intensite du crime peut etre le/la " ?motifPossible "." crlf)
 		(assert (motif-possible-par-intensite ?motifPossible))
 		(bind ?i (- ?i 1))
 	)
@@ -228,17 +229,11 @@
 
 (defrule personnage-intensite-relation-determine-motif
 	(declare (salience 49) )
-	(Personnage ?personnage avait une relation ?relation avec la victime)
-	(Le corps de la victime a ete trouve dans l'etat suivant: ?etat)
-	(Relation ?relation insinue motif $?list2)
-	(Intensite ?etat insinue motif $?list1)
-	;(intersection$ $?list1 $?list2)
+	(motif-possible-par-intensite ?motifPossible)
+	(motif-possible-par-relation ?personnage ?motifPossible)
 	=>
-	(bind ?motif (intersection$ $?list1 $?list2))
-	(if (neq 0 (length$ ?motif)) then
-		(printout t "Le motif (selon l'intensite et la relation) associe a " ?personnage " est le/la" ?motif "." crlf)
-		(assert (personnage-relation (of ?personnage)(is ?motif)))
-	)
+  (printout t "Le crime pourrait avoir ete commis par " ?personnage " avec le motif " ?motifPossible "." crlf)
+  (assert (personnage-relation (of ?personnage)(is ?motifPossible)))
 )
 
 (defrule suspect-par-arme-et-motif
@@ -485,7 +480,3 @@
 
 (reset)
 (run)
-;(facts)
-
-
-
