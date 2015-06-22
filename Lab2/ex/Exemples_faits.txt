@@ -1,0 +1,21 @@
+(lien ?caractéristiqueDuPropriétaire1 ?caractéristiqueDuPropriétaire2)
+Le Japonais a une maison triangulaire.
+(lien Japonais MaisonTriangle)
+
+(voisinGauche ?propriétaire ?voisin)
+Le voisin du Japonais a un Chien.
+(voisinGauche Japonais Chien)
+
+(voisinDroite ?propriétaire ?voisin)
+Le voisin du Japonais a un Chien.
+(voisinGauche Japonais Chien)
+
+(maison ?x ?propriétaire)
+La dernière maison appartient au Japonais.
+(maison 5 Japonais)
+Le maison avant la dernière appartient au Chinois
+(maison 4 Chinois)
+
+(couleur ?couleur)
+Une maison peut être rose.
+(couleur rose)
