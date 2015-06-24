@@ -1,1 +1,2 @@
-tuer(jean,marie)
+manger(jean,pommes)
+etre(marie,pomme)
