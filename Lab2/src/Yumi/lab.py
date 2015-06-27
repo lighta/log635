@@ -23,8 +23,8 @@ lines = filter(None, lines)
 sentences = lines
 print(sentences);
 
-with open ("lab.cfg", "r") as myfile:
-	grammaireText=myfile.read()
+grammarFile = codecs.open("lab.cfg", "r", encoding="UTF-8")
+grammaireText = grammarFile.read()
 
 grammar = grammar.FeatureGrammar.fromstring(grammaireText)
 parser = nltk.ChartParser(grammar)
