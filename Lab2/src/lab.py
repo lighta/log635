@@ -1,38 +1,72 @@
-﻿# -*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 
 import nltk
+import codecs
+import re
 from nltk import *
 
-debug=1 # 0 or 1
+debug = 0 # 0 or 1
+
+pattern = '([A-Z][a-z]*)[ ]([A-Z])'
+pattern_obj = re.compile(pattern)
+replacement_string="\\1" + '_' + "\\2"
 
 sentences= []
-#with open ("Einstein.txt", "r") as data:
-#	sentences=data.readlines()
-sentences.append('Jean tua Marie')
+with codecs.open("Einstein.txt", "r", encoding="UTF-8") as f:
+	fileContent = f.readlines()
 
-with open ("lab.cfg", "r") as myfile:
-	grammaireText=myfile.read()
-	
+for lineIndex in range(len(fileContent)):
+	print("Checking line number " + str(lineIndex) + "...")
+	currentLine = str(fileContent[lineIndex]).replace('\r\n','')
+	currentLine = pattern_obj.sub(replacement_string, currentLine)
+	currentLine = currentLine.lower().replace('\'',' ')
+	print("Line is '" + currentLine + "'")
+	if (currentLine[0] == "#"):
+		print("Line is a comment; will not use.")
+	else:
+		splitSentence = currentLine.split('.')
+		for oneSentence in splitSentence:
+			if (len(oneSentence) > 5): # completely arbitrary minimum length
+				sentences.append(oneSentence)
 
+print("")
+
+for oneSentence in sentences:
+		print("One sentence is '" + oneSentence + "'")
+
+print("")
+
+print("Loading grammar file...")
+grammarFile = codecs.open("lab.cfg", "r", encoding="UTF-8")
+grammaireText = grammarFile.read()
+
+print("Parsing...")
 grammar = grammar.FeatureGrammar.fromstring(grammaireText)
 parser = nltk.ChartParser(grammar)
 parser = parse.FeatureEarleyChartParser(grammar)
 
+print("Generating facts...")
 facts = []
 s = 0
 for sen in sentences:
+	writeFacts = 1
 	s+=1
-	print ("s="+str(s)+" sen=>"+sen)
-	tokens = sen.split()
-	trees = parser.parse(tokens)
-	for tree in trees:
-		if debug==1:
-			print(tree)
-			nltk.draw.tree.draw_trees(tree)
-		facts.append(tree.label()['SEM'])
-		print(tree.label()['SEM'])
+	print ("s="+str(s)+" sen=>"+str(sen))
+	tokens = str(sen).split()
+	try:
+		parser.parse(tokens)
+	except:
+		writeFacts = 0
+	if(writeFacts == 1):
+		trees = parser.parse(tokens)
+		for tree in trees:
+			if debug==1:
+				print(tree)
+				nltk.draw.tree.draw_trees(tree)
+			facts.append(tree.label()['SEM'])
+			print(tree.label()['SEM'])
 
 #write output
 with open ("facts.clp", "w") as foutput:
 	for sen in facts:
-		foutput.write(str(sen))
+		foutput.write(str(sen)+ '\n')
