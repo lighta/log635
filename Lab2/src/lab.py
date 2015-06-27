@@ -3,7 +3,7 @@
 import nltk
 from nltk import *
 
-debug=0 # 0 or 1
+debug=1 # 0 or 1
 
 sentences= []
 #with open ("Einstein.txt", "r") as data:

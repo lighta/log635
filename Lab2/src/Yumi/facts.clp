@@ -1,2 +1,1 @@
-manger(jean,pommes)
-etre(marie,pomme)
+vivre(anglais,maison(rouge))

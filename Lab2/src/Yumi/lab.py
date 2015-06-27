@@ -2,17 +2,24 @@
 
 import nltk
 import codecs
+import re
 from nltk import *
 #nltk.download()
+
+pattern = '([A-Z][a-z]*)[ ]([A-Z])'
+pattern_obj = re.compile(pattern)
+replacement_string="\\1" + '_' + "\\2"
 
 debug=1 # 0 or 1
 lines= []
 sentences= []
 file = codecs.open("Einstein.txt", "r", encoding="UTF-8")
+
 for x in file:
-	lines = x.lower().replace('\'','_').split('.')
+	x = pattern_obj.sub(replacement_string, x)
+	print(x);
+	lines = x.lower().replace('\'',' ').split('.')
 lines = filter(None, lines)
-#do something about pronouns
 sentences = lines
 print(sentences);
 
@@ -47,3 +54,4 @@ for sen in sentences:
 with open ("facts.clp", "w") as foutput:
         for sen in facts:
                 foutput.write(str(sen)+ '\n')
+
