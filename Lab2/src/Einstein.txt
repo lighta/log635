@@ -23,7 +23,7 @@
 ##Yumi
 L'Anglais vit dans une maison rouge. 
 ##Steven
-#Le Suédois a des chiens comme animaux domestiques. 
+Le Suédois a des chiens comme animaux domestiques. 
 ##Steven
 La personne qui boit du thé est un Danois. 
 ##Yumi
