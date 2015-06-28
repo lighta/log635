@@ -37,23 +37,37 @@ for sen in sentences:
 		newsen = "".join(s)
 		sen = newsen
 		#print("match="+str(m))
-		print("\tnewsen=>"+str(newsen))
+		print("\tnewsen(np)=>"+str(sen))
 
-	#while True:
-	#	m=re.search(",")",str(newsen))			#2 mot separe par une virgule
-	#	if m == None: #no more substitution to do
-	#		break;
-	#	m2=re.search("\(",str(sen))
-	#	m2pos = m2.start()
-	#	if m2pos != m.start(): #we are in an inner block
-	#		print("innner block found")
+	while True:
+		m2=re.search("\((\w+|\s)+,(\w+|\s)+\)",str(sen))			# 2 mot separe par une virgule
+		if m2 == None: #no more substitution to do
+			break;
+		m3=re.search("\(",str(sen))
+		m4=re.search(",",str(sen))
+		m2pos = m2.start()
+		m3pos = m3.start()
+		m4pos = m4.start()
 		
-		#s = list(str(sen))
-		#s[m.start()] = ' '
-		#s[m.end()-1] = ''
-		#newsen = "".join(s)
-		#sen = newsen
-		#print("match="+str(m))
-		#print("\tnewsen=>"+str(newsen))
+		m6=re.search("(\w+)\((\w+|\s)+,(\w+|\s)+\)",str(sen))			# 2 mot separe par une virgule
+		word = m6.group(1)
+		tmp = sen[m2pos:m2.end()]
+		#print("m6="+str(m6)+ "word="+str(m6.group(1))+ " tmp="+tmp )
+		m4=re.search(",",str(tmp))
+		
+		s = list(str(sen))
+		s[m2pos] = '' #replace ( by ' '
+		s[m4pos] = ' ' #replace , by ' '
+		s[m2.end()-1] = '' #replace ) by ' '
+		
+		s.insert(m4pos,' ')
+		i=1
+		for wi in list(str(word)):
+			s.insert(m4pos+i,wi)
+			i += 1;
+		newsen = "".join(s)
+		sen = newsen
+		sen = sen[:m6.start()] + sen[m2pos:] #remove word from sentence
+		print("\tnewsen(vp2)=>"+str(sen))
 
 
