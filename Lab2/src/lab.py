@@ -5,8 +5,8 @@ import codecs
 import re
 from nltk import *
 
-showTextTree = 0 # 0 or 1
-showDrawnTree = 0 # 0 or 1
+showTextTree = 1 # 0 or 1
+showDrawnTree = 1 # 0 or 1
 
 #pattern = '([A-Z][a-z]*)[ ]([A-Z])'
 #pattern_obj = re.compile(pattern)
