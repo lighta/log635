@@ -19,9 +19,11 @@ with codecs.open("Einstein.txt", "r", encoding="UTF-8") as f:
 for lineIndex in range(len(fileContent)):
 	print("Checking line number " + str(lineIndex) + "...")
 	currentLine = str(fileContent[lineIndex]).replace('\r\n','')
-	currentLine = currentLine.replace('Pall Mall','Pall_Mall') # mettre ici tous les replace qu'on a besoin
+	currentLine = currentLine.replace('Pall Mall','Pall_Mall')
+	currentLine = currentLine.replace('Blue Master','Blue_Master')# mettre ici tous les replace qu'on a besoin
 	#currentLine = pattern_obj.sub(replacement_string, currentLine)
 	currentLine = currentLine.replace('\'',' ')
+	currentLine = currentLine.replace(',','')
 	print("Line is '" + currentLine + "'")
 	if (len(currentLine) > 0 and currentLine[0] == "#"):
 		print("Line is a comment; will not use.")
