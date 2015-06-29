@@ -24,9 +24,11 @@ for lineIndex in range(len(fileContent)):
 print("")
 
 s = 0
+cleaned_facts = []
 for sen in sentences:
 	print("sen="+str(sen))
 	
+	#extract (fact) 
 	while True:
 		m=re.search("\((\w+|\s)+\)",str(sen))			#direct (word) without coma
 		if m == None: #no more substitution to do
@@ -39,35 +41,41 @@ for sen in sentences:
 		#print("match="+str(m))
 		print("\tnewsen(np)=>"+str(sen))
 
+	#move verbe instead coma
 	while True:
 		m2=re.search("\((\w+|\s)+,(\w+|\s)+\)",str(sen))			# 2 mot separe par une virgule
 		if m2 == None: #no more substitution to do
 			break;
-		m3=re.search("\(",str(sen))
 		m4=re.search(",",str(sen))
 		m2pos = m2.start()
-		m3pos = m3.start()
+		
+		m6=re.search("(\w+)\((\w+|\s)+,(\w+|\s)+\)",str(sen))			# meme regex preceder par un mot
+		word = m6.group(1)												#le verb est le premier mot
+		
+		tmp = sen[m2pos:m2.end()]										#tmp = string matched by regex
+		m4=re.search(",",str(tmp))
 		m4pos = m4.start()
 		
-		m6=re.search("(\w+)\((\w+|\s)+,(\w+|\s)+\)",str(sen))			# 2 mot separe par une virgule
-		word = m6.group(1)
-		tmp = sen[m2pos:m2.end()]
-		#print("m6="+str(m6)+ "word="+str(m6.group(1))+ " tmp="+tmp )
-		m4=re.search(",",str(tmp))
-		
-		s = list(str(sen))
-		s[m2pos] = '' #replace ( by ' '
-		s[m4pos] = ' ' #replace , by ' '
-		s[m2.end()-1] = '' #replace ) by ' '
+		s = list(str(tmp))
+		s[0] = ' ' #replace ( by ' '
+		s[m4pos] = '' #replace , by ''
+		s[len(str(tmp))-1] = ' ' #replace ) by ' '
 		
 		s.insert(m4pos,' ')
 		i=1
 		for wi in list(str(word)):
 			s.insert(m4pos+i,wi)
 			i += 1;
+		s.insert(m4pos+i,' ')
 		newsen = "".join(s)
-		sen = newsen
-		sen = sen[:m6.start()] + sen[m2pos:] #remove word from sentence
+		
+		#print("\tnewsen=>"+str(newsen))
+		
+		sen = sen[:m6.start()]+newsen+sen[m6.end():] #remove word from sentence
 		print("\tnewsen(vp2)=>"+str(sen))
+	
+	sen = re.sub("  ",' ',sen)
+	print("\tcleaned=>"+str(sen))
+	cleaned_facts.append('('+str(sen)+')')
 
 
