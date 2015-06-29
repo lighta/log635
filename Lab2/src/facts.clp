@@ -1,1 +1,1 @@
-vivre(Anglais,maison(rouge))
+vivre(fumer(homme,Blend),centre(avoir(celui,chats)))
