@@ -74,6 +74,13 @@ for sen in sentences:
 		sen = sen[:m6.start()]+newsen+sen[m6.end():] #remove word from sentence
 		print("\tnewsen(vp2)=>"+str(sen))
 	
+	
+	m2=re.search("\((\w+|\s|,)+(\w+|\s)+\)",str(sen))
+	if m2 == None: #no more substitution to do
+			break;
+	print("\tm2=>"+str(m2))
+	
+			
 	sen = re.sub("  ",' ',sen)
 	print("\tcleaned=>"+str(sen))
 	cleaned_facts.append('('+str(sen)+')')

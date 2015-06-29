@@ -82,13 +82,16 @@ for sen in facts:
 	sen = str(sen)
 	print("sen="+str(sen))
 	
+	doublecheck=0
 	while True:
 		mf=re.search("\(",sen)
 		if mf == None: #no more substitution to do
-				break;
-		#extract (fact) 
+			break;
+				
+		#extract (fact)
+		#regle 1 we have a simple fact
 		while True:
-			m=re.search("\((\w+|\s)+\)",str(sen))			#direct (word) without coma
+			m=re.search("\((\w+|\s|\|)+\)",str(sen))			#direct (word) without coma
 			if m == None: #no more NP substitution to do
 				break;
 			s = list(str(sen))
@@ -98,16 +101,20 @@ for sen in facts:
 			sen = newsen
 			#print("match="+str(m))
 			print("\tnewsen(np)=>"+str(sen))
+			doublecheck=0
 
 		#move verbe instead coma
+		#regle 2 we have a verb
 		while True:
-			m2=re.search("\((\w+|\s)+,(\w+|\s)+\)",str(sen))			# 2 mot separe par une virgule
+			m2=re.search("\((\w+|\s|\|)+,(\w+|\s|\|)+\)",str(sen))			# 2 mot separe par une virgule
 			if m2 == None: #no more VP substitution to do
 				break;
 			m4=re.search(",",str(sen))
 			m2pos = m2.start()
 			
-			m6=re.search("(\w+)\((\w+|\s)+,(\w+|\s)+\)",str(sen))			# meme regex preceder par un mot
+			m6=re.search("(\w+)\((\w+|\s|\|)+,(\w+|\s|\|)+\)",str(sen))			# meme regex preceder par un mot
+			if m6 == None: #no more VP substitution to do
+				break;
 			word = m6.group(1)												#le verb est le premier mot
 			
 			tmp = sen[m2pos:m2.end()]										#tmp = string matched by regex
@@ -130,6 +137,44 @@ for sen in facts:
 			#print("\tnewsen=>"+str(newsen))
 			sen = sen[:m6.start()]+newsen+sen[m6.end():] #remove word from sentence
 			print("\tnewsen(vp2)=>"+str(sen))
+			doublecheck=0
+		
+		#regle 3 we have a list
+		#this should only fire if r1 and r2 not available
+		if doublecheck==1:
+			m2=re.search("(\w+)\((\w+|\s|,)+(\w+|\s)+\)",str(sen))
+			if m2 == None: #no more substitution to do
+				break;
+			word = m2.group(1)
+			sword = len(str(word))
+			tmp = sen[m2.start():m2.end()]
+			#print("\ttmp=>"+str(tmp))
+			
+			s = list(str(tmp))
+			s[sword] = ' '
+			s[len(str(tmp))-1] = '|'
+			
+			s.insert(0,' ')
+			newsen = "".join(s)
+			tmp = newsen 
+			tmp = re.sub(",",' ',tmp) #replace all , with ' '
+			tmp = "|list"+tmp
+			#print("\ttmp2=>"+str(tmp))
+			
+			sen = sen[:m2.start()]+tmp+sen[m2.end():] #remove word from sentence
+			print("\tnewsen(list)=>"+str(sen))
+			doublecheck=0
+		else:
+			doublecheck=1
+	
+	m3=re.search("\|(\w+|\s*)+\|",str(sen))
+	if m3 != None:
+		s = list(str(sen))
+		s[m3.start()] = '('
+		s[m3.end()-1] = ')'
+		newsen = "".join(s)
+		sen = newsen
+		print("\tnewsen(list2)=>"+str(sen))
 	
 	sen = re.sub("  ",' ',sen)
 	print("\tcleaned=>"+str(sen))
