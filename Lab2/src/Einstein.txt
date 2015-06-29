@@ -8,10 +8,10 @@
 #Jean boit le cafés.
 
 #Ces phrases fonctionnent!
-#Jean boit du café.
-#La Danoise boit les thés.
-#Jean vit dans une maison verte.
-#Jean boit un café noir.
+Jean boit du café.
+La Danoise boit les thés.
+Jean vit dans une maison verte.
+Jean boit un café noir.
 L'Anglais habite dans une maison.
 Le Suédois a des animaux domestiques.
 Le Danois boit de la bière.
@@ -38,7 +38,7 @@ Le propriétaire de la maison jaune fume des Dunhill.
 La personne qui vit dans la maison du centre boit du jus d'orange. 
 Le Norvégien habite la première maison et il vit juste à côté de la maison bleue. L'homme qui fume les Blend vit à côté de celui qui a des chats. L'homme qui a un cheval est le voisin de celui qui fume des Dunhill. Le propriétaire qui fume des Blue Master boit de la bière. L'Allemand fume des Prince. L'homme qui fume des Blend a un voisin qui boit de l'eau.
 
-La personne que l'anglais boit est dans la maison blanche.
+#La personne que l'anglais boit est dans la maison blanche.
 
 Le Norvégien habite la première maison et il vit juste à côté de la maison bleue. 
 L'homme qui fume les Blend vit à côté de celui qui a des chats. 
