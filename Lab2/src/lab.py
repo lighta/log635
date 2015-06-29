@@ -176,7 +176,7 @@ for sen in facts:
 		sen = newsen
 		print("\tnewsen(list2)=>"+str(sen))
 	
-	sen = re.sub("  ",' ',sen)
+	sen = re.sub("( )+",' ',sen)
 	print("\tcleaned=>"+str(sen))
 	cleaned_facts.append('('+str(sen)+')')
 
