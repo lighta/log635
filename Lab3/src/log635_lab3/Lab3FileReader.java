@@ -1,3 +1,4 @@
+package log635_lab3;
 
 import java.util.*;
 import java.io.*;
@@ -9,12 +10,18 @@ public class Lab3FileReader {
 	Vector<Vector<Double>> vDataColumnsEvenNumberedRows;
 	Vector<Vector<Double>> vDataColumnsOddNumberedRows;
 	
-	public Lab3FileReader(String strFilePath) {
+	Vector<Vector<Double>> vDataLineEvenNumberedRows;
+	Vector<Vector<Double>> vDataLineOddNumberedRows;
+	
+	
+	public Lab3FileReader(String strFilePath, int primitiveCnt) {
 		
 		vHeaders = new Vector<String>();
 		vDataColumns = new Vector<Vector<Double>>();
 		vDataColumnsEvenNumberedRows = new Vector<Vector<Double>>();
 		vDataColumnsOddNumberedRows = new Vector<Vector<Double>>();
+		vDataLineEvenNumberedRows = new Vector<Vector<Double>>();
+		vDataLineOddNumberedRows = new Vector<Vector<Double>>();
 		
 		try {
 			BufferedReader br;
@@ -45,11 +52,14 @@ public class Lab3FileReader {
 		    br.readLine(); // skip first line
 		    while ((oneLine = br.readLine()) != null && oneLine.length() > 0) {
 		    	splitString = oneLine.split(";");
+		    	Vector<Double> vline = new Vector<Double>();
+		    	
 		    	for (int i = 0; i < splitString.length; i++)
 		    	{
 		    		dblOneItem = Double.parseDouble(splitString[i]);
+		    		vline.add(dblOneItem);
 		    		
-		    		vDataColumns.elementAt(i).add(dblOneItem);
+		    		//vDataColumns.elementAt(i).add(dblOneItem);
 		    		if (rowNumber % 2 == 0) {
 		    			vDataColumnsEvenNumberedRows.elementAt(i).add(dblOneItem);
 		    		}
@@ -57,6 +67,13 @@ public class Lab3FileReader {
 		    			vDataColumnsOddNumberedRows.elementAt(i).add(dblOneItem);
 		    		}
 		    	}
+		    	
+		    	if (rowNumber % 2 == 0) {
+		    		vDataLineEvenNumberedRows.add(vline);
+		    	}	else {
+		    		vDataLineOddNumberedRows.add(vline);
+		    	}
+		    	
 		    	rowNumber++;
 		    }
 		}
@@ -67,13 +84,6 @@ public class Lab3FileReader {
 		}
 
 	}
-	
-	
-	
-	
-	
-	
-	
 	
 	
 	public Vector<String> GetHeaders() {
@@ -88,7 +98,19 @@ public class Lab3FileReader {
 		return vDataColumnsEvenNumberedRows.elementAt(i);
 	}
 	
+	public Vector<Double> GetDataColumnEvenRowsOnly() {
+		return vDataColumnsEvenNumberedRows.get(0);
+	}
+	
 	public Vector<Double> GetDataColumnOddRowsOnly(int i) {
 		return vDataColumnsOddNumberedRows.elementAt(i);
+	}
+	
+	public Vector<Double> GetDataLineOddRowsOnly(int i) {
+		return vDataLineOddNumberedRows.elementAt(i);
+	}
+	
+	public Vector<Double> GetDataLineEvenRowsOnly(int i) {
+		return vDataLineEvenNumberedRows.elementAt(i);
 	}
 }
