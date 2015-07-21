@@ -1,16 +1,23 @@
 package log635_lab3;
 
-import java.io.PipedReader;
 import java.io.PipedWriter;
 import java.util.ArrayList;
 import java.util.List;
 
 public class schema {
-	int nbcouche = 0;
-	int nbperceptron[];
-	List<List<perceptron>> schema;
+	private int nbcouche = 0;
+	private int nbperceptron[];
+	private List<List<perceptron>> schema;
 	
 	
+	public List<List<perceptron>> getSchema() {
+		return schema;
+	}
+
+	public void setSchema(List<List<perceptron>> schema) {
+		this.schema = schema;
+	}
+
 	public schema(int nbcouche, int nbperceptron[], PipedWriter[] inputs) {
 		super();
 		this.nbcouche = nbcouche; //nb couche
@@ -27,11 +34,11 @@ public class schema {
 		PipedWriter[] pipesin = inputs;
 		
 		while(this.nbcouche > i++){ //pour toute les couche
-			List couche = new ArrayList<perceptron>();
+			List<perceptron> couche = new ArrayList<>();
 			int j = nbperceptron[i]; //nbde perceptron pour la couche
 			PipedWriter[] outpipe = new PipedWriter[j];
 			
-			if(i>1){ //on creer seulement pour la 1er couche, le reste est mapper
+			if(i>0){ //on creer seulement pour la 1er couche, le reste est mapper
 				pipesin = outpipe;
 			}
 			
@@ -43,15 +50,6 @@ public class schema {
 			schema.add(couche);
 		}
 	}
-
-	//learn
-	public boolean learn(){
-		double sum = 0;
-		boolean success = false;
-		while(!success)
-		{
-			
-		}
-		return false;
-	}
+	
+	
 }
