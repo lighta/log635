@@ -47,8 +47,10 @@ public class main {
 			//System.out.println(lb3fr.GetDataColumnOddRowsOnly(2).elementAt(i));
 		}
 		
+		//create schema
+		
+		
+		
 	}
-	
-
 }
 
