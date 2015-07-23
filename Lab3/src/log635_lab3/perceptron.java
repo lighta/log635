@@ -7,131 +7,129 @@ import java.lang.Math;
 import com.sun.java.swing.plaf.windows.WindowsTreeUI.ExpandedIcon;
 
 public class perceptron extends Thread {
-	boolean done;
+	boolean outputSent;
 	
-	private PipedReader[] inputs;
+	private PipedReader[] inputPipes;
 	private double[] inputWeights;
 	private double bias;
 	private double biasWeight;
-	private PipedWriter output;
-	private boolean isSigmoid;
+	private PipedWriter outPipe;
 	
-	public perceptron(PipedWriter[] inpipe, PipedWriter outpipe, boolean isSigmoid)
+	public perceptron(PipedWriter[] inputPipes, PipedWriter outPipe)
 	{
 		bias = 1;
 		biasWeight = 1;
-		this.isSigmoid = isSigmoid;
-		this.output = output;
-		
+		this.outPipe = outPipe;
 		int i=0;
-		while(inputs.length < i++){ //donne un chiffre random a chaque weight
+		while(this.inputPipes.length < i++){ // Randomize every weights.
 			inputWeights[i] = Math.random();
 		}
-		connect(inpipe,outpipe);
+		connect(inputPipes,outPipe);
 	}
 	
-	public perceptron(PipedWriter[] inpipe, double[] inputWeights, double bias, double biasWeight,PipedWriter outpipe, boolean isSigmoid)
-	{
-		this.inputWeights = inputWeights;
-		this.bias = bias;
-		this.biasWeight = biasWeight;
-		this.isSigmoid = isSigmoid;
-		this.output = output;
-		connect(inpipe,outpipe);
-	}
-	
-	private void connect(PipedWriter[] inpipe, PipedWriter outpipe){
-		try {
-			// Connect InputPipes to upstream filters
-			for(int i=0; i < inputs.length-1; i++){
-				this.inputs[i] = new PipedReader();
-				this.inputs[i].connect(inpipe[i]);
-			}
-			System.out.println("FormatFilter:: connected to upstream filters.");
-		} catch (Exception Error) {
-			System.out.println("FormatFilter:: Error connecting input pipes.");
-		} // try/catch
-
-		try {
-			// Connect outputPipe to downstream filter
-			//PipedWriter outputPipe = new PipedWriter();
-			this.output = outpipe;
-			System.out.println("FormatFilter:: connected to downstream filter.");
-		} catch (Exception Error) {
-			System.out.println("FormatFilter:: Error connecting output pipe.");
-		} // catch
-	}
-	
-	public double calc(double[] inputs)
+	public double calcOutput(double[] inputs)
 	{
 		double sum = 0, out;
-		boolean success;
-		
+		// Calc the perceptron value.
 		for(int i=0; i < inputs.length-1; i++)
 		{
 			sum += inputs[i] * inputWeights[i];
 		}
-		
 		sum += bias * biasWeight;
-		
-		if(isSigmoid)
-		{
-			out = ( 1/ (1 +  Math.exp( -sum ) ) );
-			out -= inputs[inputs.length] * inputWeights[inputWeights.length];
-		}
-		else
-		{
-			out = sum - inputs[inputs.length] * inputWeights[inputWeights.length];
-		}
+		// Activation function in this case sigmoid.
+		out = ( 1/ (1 +  Math.exp( -sum ) ) );
+		out -= inputs[inputs.length] * inputWeights[inputWeights.length];
 		return out;
-
 	}
 	
-	public void run() {		
-		try {
-			done = false;
-			while (!done) {
-				double[] inputsd = null;
-				int i=0;
-				
-				while(inputs.length < i++){ //prend l'entree de chaque input
-					String lineOfText = null;
-					char[] ch = new char[1]; // char array is required to turn char into a string
-					int intch; // the integer value read from the pipe
-					
-					intch = inputs[i].read();
-					ch[0] = (char) intch;
-					if (intch == -1) { // pipe is closed
-						done = true;
-					} else {
-						lineOfText += new String( ch);
-					}
-					if (intch == '\n') {  // end of line	
-						inputsd[i] = Double.parseDouble( lineOfText );
-					}
-				}
-				double res = calc(inputsd);
-				output.write(res+"\n");
-				output.flush();
-			} // while
-		} catch (Exception error) {
-			System.out.println("StatusFilter:: Interrupted.");
-		} // try/catch
-		disconnect(); //closing pipe
+	private void connect(PipedWriter[] inputPipes, PipedWriter outPipe){
+		try 
+		{
+			// Connect InputPipes to upstream filters
+			for(int i=0; i < this.inputPipes.length-1; i++)
+			{
+				this.inputPipes[i] = new PipedReader();
+				this.inputPipes[i].connect(inputPipes[i]);
+			}
+			System.out.println("FormatFilter:: connected to upstream filters.");
+		} 
+		catch (Exception Error) 
+		{
+			System.out.println("FormatFilter:: Error connecting input pipes.");
+		} 
+		try 
+		{
+			// Connect outputPipe to downstream filter
+			this.outPipe = outPipe;
+			System.out.println("FormatFilter:: connected to downstream filter.");
+		} 
+		catch (Exception Error) 
+		{
+			System.out.println("FormatFilter:: Error while connecting output pipe.");
+		} 
 	}
 	
 	private void disconnect(){
-		try {
-			int i=0;
-			while(inputs.length < i++){ //ferme chaque input
-				inputs[i].close();
+		try 
+		{
+			int i = 0;
+			while(inputPipes.length < i++)
+			{ 
+				inputPipes[i].close();
 			}
 			System.out.println("StatusFilter:: inputs pipes closed.");
-			output.close();
+			
+			outPipe.close();
 			System.out.println("StatusFilter:: output pipe closed.");
-		} catch (Exception Error) {
-			System.out.println("StatusFilter:: Error closing pipes.");
-		} // try/catch
+			
+		} 
+		catch (Exception Error) 
+		{
+			System.out.println("StatusFilter:: Error while closing pipes.");
+		} 
+	}
+	
+	
+	public void run() {		
+		try {
+			outputSent = false;
+			while (!outputSent) 
+			{
+				double[] inputsValue = new double[inputPipes.length];
+				int i = 0;
+				
+				//@TODO pe test avec dataoutputstream
+				while(inputPipes.length < i++) // For each inputPipes.
+				{ 
+					boolean EOL = false; // End Of Line.
+					while(EOL == false)
+					{
+						String lineOfText = null;
+						char[] ch = new char[1]; // Char array is required to turn since pipes read one char at a time.
+						int value; // The value read from the pipe.
+						value = inputPipes[i].read();
+						ch[0] = (char) value;
+						if (value == -1) { // Pipe is closed.
+							outputSent = true;
+						} else {
+							lineOfText += new String( ch);
+						}
+						if (value == '\n') {  // End of line	
+							inputsValue[i] = Double.parseDouble( lineOfText );
+							EOL = true;
+						}
+					}
+				}
+				double res = calcOutput(inputsValue);
+				outPipe.write(res + "\n");
+				outPipe.flush();
+			} 
+		} 
+		catch (Exception error) 
+		{
+			System.out.println("StatusFilter:: Interrupted.");
+		} 
+		disconnect();
 	}
 	
 }

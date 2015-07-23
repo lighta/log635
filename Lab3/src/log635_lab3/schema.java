@@ -5,8 +5,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class schema {
-	private int nbcouche = 0;
-	private int nbperceptron[];
+	private int nbLayer = 0;
+	private int nbPerceptron[];
 	private List<List<perceptron>> schema;
 	
 	
@@ -18,36 +18,33 @@ public class schema {
 		this.schema = schema;
 	}
 
-	public schema(int nbcouche, int nbperceptron[], PipedWriter[] inputs) {
+	public schema(int nbLayer, int nbPerceptron[], PipedWriter[] inputs) {
 		super();
-		this.nbcouche = nbcouche; //nb couche
-		this.nbperceptron = nbperceptron; //by couche
-		
+		this.nbLayer = nbLayer; 
+		this.nbPerceptron = nbPerceptron; 
 		createSchema(inputs);
-		
 	}
 
 	private void createSchema(PipedWriter[] inputs){
 		int i = 0;
 		schema = new ArrayList<List<perceptron>>();
+		PipedWriter[] pipesIn = inputs;
 		
-		PipedWriter[] pipesin = inputs;
-		
-		while(this.nbcouche > i++){ //pour toute les couche
-			List<perceptron> couche = new ArrayList<>();
-			int j = nbperceptron[i]; //nbde perceptron pour la couche
-			PipedWriter[] outpipe = new PipedWriter[j];
+		while(this.nbLayer > i++){ // For each layer.
+			List<perceptron> layer = new ArrayList<>();
+			int j = nbPerceptron[i]; // nb perceptron for this layer.
+			PipedWriter[] outpipe = new PipedWriter[j]; // Number of outputs/ inputs for the next layer.
 			
-			if(i>0){ //on creer seulement pour la 1er couche, le reste est mapper
-				pipesin = outpipe;
+			if(i > 0){ // We only handle the first layer since its outputs becomes inputs. 
+				pipesIn = outpipe;
 			}
 			
-			while(0 > j--){
+			while(0 > j--){ //Might have a funny bug here ex: j=2 comes here j=1 add one perceptron, j=0 doesn't enter hence only creating 1 out of 2 perceptron
 				outpipe[j] = new PipedWriter();
-				perceptron percep = new perceptron(pipesin,outpipe[j],false);
-				couche.add(percep);
+				perceptron percep = new perceptron(pipesIn,outpipe[j]);
+				layer.add(percep);
 			}
-			schema.add(couche);
+			schema.add(layer);
 		}
 	}
 	

@@ -9,48 +9,43 @@ import java.util.*;
 public class main {
 	
 	private double learningRate = 0.1;
-	private int perceptronCnt = 2;
+	private static int nbLayer = 2;
+	private static int[] perceptronCntByLayer = {2,1};
 	private static int primitiveCnt = 12;
+	private static int validationLineRate = 10; // Valid rate is calculated in a modulo so in short 1/var.
 	
 	public static void main(String[] args) {
-		Lab3FileReader lb3fr = new Lab3FileReader("data/Donnees_sources.csv",primitiveCnt);
+		Lab3FileReader lb3fr = new Lab3FileReader("data/Donnees_sources.csv", primitiveCnt, validationLineRate);
 		
-		// Print headers
+		// Print headers.
 		for (int i = 0; i < lb3fr.GetHeaders().size(); i++)
 		{
-			//System.out.println(lb3fr.GetHeaders().elementAt(i));
+			System.out.println(lb3fr.GetHeaders().elementAt(i));
 		}
 		
-		System.out.println(lb3fr.GetDataColumnEvenRowsOnly());
-		
-		System.out.println("---");
-		
-		System.out.println("test pour yumi");
-		System.out.println(lb3fr.GetDataLineEvenRowsOnly(0));
-		
-		// Print first column
-		for (int i = 0; i < lb3fr.GetDataColumn(i).size(); i++)
+		System.out.println("#######################################");
+	
+		// Print the entire learning set.
+		for (int i = 0; i < lb3fr.GetLearningSetSize(); i++)
 		{
-			//System.out.println(lb3fr.GetDataColumn(0).elementAt(i));
+			System.out.println(lb3fr.GetLearningSetDataRows(i));
 		}
 		
-		System.out.println("---");
+		System.out.println("#######################################");
 		
-		// Print second column, even numbers only
-		for (int i = 0; i < lb3fr.GetDataColumnEvenRowsOnly(1).size(); i++)
+		// Print the entire validation set.
+		for (int i = 0; i < lb3fr.GetValidationSetSize(); i++)
 		{
-			//System.out.println(lb3fr.GetDataColumnEvenRowsOnly(1).elementAt(i));
+			System.out.println(lb3fr.GetValidationSetDataRows(i));
 		}
 		
-		System.out.println("---");
+		System.out.println("#######################################");
 		
-		// Print third column, odd numbers only
-		for (int i = 0; i < lb3fr.GetDataColumnOddRowsOnly(2).size(); i++)
-		{
-			//System.out.println(lb3fr.GetDataColumnOddRowsOnly(2).elementAt(i));
-		}
+	
+		// Create the neural network.
+		PipedWriter[] inpipe = new PipedWriter[7];
+		schema neuralNetwork = new schema(nbLayer, perceptronCntByLayer, inpipe);
 		
-		//create schema
 		/*
 		int[] nbper = {7,6,5};
 		PipedWriter[] inpipe = new PipedWriter[7];
