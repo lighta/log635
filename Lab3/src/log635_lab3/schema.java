@@ -30,21 +30,26 @@ public class schema {
 		schema = new ArrayList<List<perceptron>>();
 		PipedWriter[] pipesIn = inputs;
 		
-		while(this.nbLayer > i++){ // For each layer.
+		while(this.nbLayer > i) // For each layer.
+		{ 
 			List<perceptron> layer = new ArrayList<>();
 			int j = nbPerceptron[i]; // nb perceptron for this layer.
 			PipedWriter[] outpipe = new PipedWriter[j]; // Number of outputs/ inputs for the next layer.
 			
-			if(i > 0){ // We only handle the first layer since its outputs becomes inputs. 
+			if(i > 0) // We only handle the first layer since its outputs becomes inputs. 
+			{ 
 				pipesIn = outpipe;
 			}
 			
-			while(0 > j--){ //Might have a funny bug here ex: j=2 comes here j=1 add one perceptron, j=0 doesn't enter hence only creating 1 out of 2 perceptron
+			while(0 < j)
+			{ 
 				outpipe[j] = new PipedWriter();
 				perceptron percep = new perceptron(pipesIn,outpipe[j]);
 				layer.add(percep);
+				j--;
 			}
 			schema.add(layer);
+			i++;
 		}
 	}
 	
