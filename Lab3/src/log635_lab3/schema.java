@@ -44,8 +44,15 @@ public class schema {
 			while(0 < j)
 			{ 
 				outpipe[j] = new PipedWriter();
-				perceptron percep = new perceptron(pipesIn,outpipe[j]);
-				layer.add(percep);
+				perceptron percep;
+				try {
+					percep = new perceptron(pipesIn,outpipe[j]);
+					layer.add(percep);
+					//j--; //force retry ?
+				} catch (Exception e) {
+					System.err.println("Fail to create perceptron DEBUG ME");
+					//e.printStackTrace();
+				}
 				j--;
 			}
 			schema.add(layer);
