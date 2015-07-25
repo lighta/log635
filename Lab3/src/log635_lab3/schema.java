@@ -12,7 +12,6 @@ public class schema {
 	private List<List<perceptron>> schema;
 	private boolean started = false;
 	private PipedWriter finalout;
-	private boolean finished = false;
 	
 	
 	public List<List<perceptron>> getSchema() {
@@ -31,39 +30,76 @@ public class schema {
 		createSchema(inputs);
 	}
 
+	
+	/**
+	 * Multiplexer, 
+	 * DO NOT CALL IT unless you know what u doing
+	 * @param pw
+	 * @param dup
+	 * @throws IOException
+	 */
+	private void createPropagators(PipedWriter pw[],PipedWriter[][] dup) throws IOException {		
+		int i=0;
+		for(PipedWriter cur_pw : pw){
+			Propagator pg = new Propagator(cur_pw,dup[i]);
+			pg.start();
+			i++;
+		}
+	}
+
+	
 	/**
 	 * Create a schema configuration with the perceptron
 	 * This function ain't optimized but should be called that much so it's ok
 	 * @param inputs
 	 */
 	private void createSchema(PipedWriter[] inputs){
+		int GUIcounter = 0;
 		schema = new ArrayList<List<perceptron>>();
 		PipedWriter[] pipesIn = inputs;
+		
+		PipedWriter[][] LayerOutpipes = new PipedWriter[this.nbLayer][];
 		
 		for(int i=0; i < this.nbLayer; i++){ 
 			List<perceptron> layer = new ArrayList<>();
 			final int sz = nbPerceptron[i]; // nb perceptron for this layer.
-			PipedWriter[] outpipe = new PipedWriter[sz]; // Number of outputs/ inputs for the next layer.
+			LayerOutpipes[i] = new PipedWriter[sz]; // Number of outputs/ inputs for the next layer.
 			
 			if(i > 0){ // We only handle the first layer since its outputs becomes inputs. 
-				pipesIn = outpipe;
+				pipesIn = LayerOutpipes[i-1];
 			}
 			
-			for(int j=0; j < sz; j++)	//iterate foreach perceptron
-			{ 
+			PipedWriter[][] dup = null;
+			if(sz > 0){ //create Multiplexing for pipes
+				dup = new PipedWriter[pipesIn.length][sz];
+				for(int l=0; l < pipesIn.length; l++){
+					for(int k=0; k < sz; k++){
+						dup[l][k] = new PipedWriter();
+					}
+				}
+				try {
+					createPropagators(pipesIn,dup);
+				} catch (IOException e1) {
+					System.err.println("Fail to create Prepagators DEBUG ME");
+					//e1.printStackTrace();
+				}
+			}
+			
+			for(int j=0; j < sz; j++) { //iterate foreach perceptron
 				PipedWriter[] pipesInJ;
-				if(i > 0 && j >0)
-					pipesInJ = pipesIn.clone();	//separate array for each perceptron
+				if(sz > 0)
+					pipesInJ = dup[j];	//separate array for each perceptron
 				else
 					pipesInJ = pipesIn;
 				
 				if(sz==1) //last one
-					outpipe[j] = finalout;
+					LayerOutpipes[i][j] = finalout;
 				else
-					outpipe[j] = new PipedWriter();
+					LayerOutpipes[i][j] = new PipedWriter();
 				
 				try {
-					perceptron percep = new perceptron(pipesInJ,outpipe[j]);
+					perceptron percep = new perceptron(GUIcounter,pipesInJ,LayerOutpipes[i][j]);
+					GUIcounter++;
 					layer.add(percep);
 				} catch (Exception e) {
 					System.err.println("Fail to create perceptron DEBUG ME");
@@ -113,7 +149,8 @@ public class schema {
 	}
 	
 	/**
-	 * @return
+	 * Blocking function to wait till all perceptrons of schema 
+	 * as finished to compute
 	 */
 	public void waitFinished(){
 		int i=0;
@@ -136,22 +173,7 @@ public class schema {
 			i++;
 		}
 	}
-	
-	
-	
-	private static void shout_data(PipedWriter[] inputPipes){
-		//simulate shout data
-		try {
-			inputPipes[0].write("0\n1\n0\n1\n"); //0101
-			inputPipes[1].write("0\n0\n1\n1\n"); //0011
-			
-			inputPipes[0].close();	
-			inputPipes[1].close();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} //0101
-	}
+
 	
 	private static void test_sch1(){
 		System.out.println("Testing schema 1");
@@ -173,8 +195,10 @@ public class schema {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
-		shout_data(inputPipes);
-		sch.waitFinished();
+		utils.test_shoutData(inputPipes);
+		List<Double> sch_out = utils.readSortie(readfinal);
+		System.out.println("Sortie sch1="+sch_out);
+		sch.waitFinished(); //ensure all is done before quitting test
 	}
 	
 	private static void test_sch2(){
@@ -197,13 +221,15 @@ public class schema {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
-		shout_data(inputPipes);
-
+		List<Double> sch_out = utils.readSortie(readfinal);
+		System.out.println("Sortie sch2="+sch_out);
+		utils.test_shoutData(inputPipes);
+		sch.waitFinished(); //ensure all is done before quitting test
 	}
 	
 	public static void main(String[] args) {
 		System.out.println("Schema main, quicktest");
-		test_sch1();
+		//test_sch1();
 		test_sch2();
 	}
 }

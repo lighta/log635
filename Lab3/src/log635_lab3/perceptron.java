@@ -18,10 +18,9 @@ public class perceptron extends Thread {
 	boolean isSigmoid;
 	final int GUI;		//unique identifier
 	
-	public perceptron(PipedWriter[] inPipes, PipedWriter outPipe) throws Exception
+	public perceptron(final int GUI, PipedWriter[] inPipes, PipedWriter outPipe) throws Exception
 	{
-	//	this.GUI=GUI;
-		GUI = 0;
+		this.GUI=GUI;
 		this.bias = 1;
 		this.biasWeight = 1;
 		this.outPipe = outPipe;
@@ -201,51 +200,7 @@ public class perceptron extends Thread {
 		disconnect();
 	}
 	
-	private static List<Double> readSortie(PipedReader entree){
-		if(entree==null) //useless but whatever
-			return null;
-		
-		List<Double> valsortie = new ArrayList<>();
-		try {
-			boolean done=false;
-			
-			while(done==false){
-				double val=0;
-				boolean EOL = false;
-				StringBuilder lineOfText = new StringBuilder();
-				
-				while(EOL == false){
-					int value; // The value read from the pipe.
-					value = entree.read();
-					
-					char ch = (char) value;
-					if (value == -1) { // Pipe is closed.
-						done=true;
-						break;
-					} else {
-						lineOfText.append(ch);
-					}
-					if (value == '\n') {  // End of line	
-						val = Double.parseDouble( lineOfText.toString() );
-						EOL = true;
-						//System.out.println("val="+val);
-						valsortie.add(val);
-					}
-				}
-			}
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		try {
-			entree.close();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return valsortie;
-	}
+	
 	
 	public static void main(String[] args) {
 		System.out.println("Perception main, quicktest");
@@ -282,27 +237,13 @@ public class perceptron extends Thread {
 			System.exit(1);
 		}
 		
-		try { //simulate shout data
-			inputPipes[0].write("0\n1\n0\n1\n"); //0101
-			inputPipes[1].write("0\n0\n1\n1\n"); //0011
-			
-			OUinputPipes[0].write("0\n1\n0\n1\n"); //0101
-			OUinputPipes[1].write("0\n0\n1\n1\n"); //0011
-			
-			//we hot like that that we know we can close the stream now
-			inputPipes[0].close();	
-			inputPipes[1].close();
-			
-			OUinputPipes[0].close();	
-			OUinputPipes[1].close();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		List<Double> sETpercep = readSortie(ETentree);
+		utils.test_shoutData(inputPipes);
+		utils.test_shoutData(OUinputPipes);
+		
+		List<Double> sETpercep = utils.readSortie(ETentree);
 		System.out.println("Sortie ET perceptron sETpercep="+sETpercep);
 		
-		List<Double> sOUpercep = readSortie(OUentree);
+		List<Double> sOUpercep = utils.readSortie(OUentree);
 		System.out.println("Sortie OU perceptron sOUpercep="+sOUpercep);	
 	}
 }
