@@ -12,6 +12,7 @@ public class Schema {
 	private List<List<Perceptron>> schema;
 	private boolean started = false;
 	private PipedWriter finalout;
+	int GUIcounter = 0;
 	
 	
 	public List<List<Perceptron>> getSchema() {
@@ -39,9 +40,8 @@ public class Schema {
 	 * @throws IOException
 	 */
 	private void createPropagators(PipedWriter pw[],PipedWriter[][] dup) throws IOException {		
-		int i=0;
-		for(PipedWriter cur_pw : pw){
-			Propagator pg = new Propagator(cur_pw,dup[i]);
+		for(int i=0; i<pw.length; i++){
+			Propagator pg = new Propagator(GUIcounter++,pw[i],dup[i]);
 			pg.start();
 			i++;
 		}
@@ -54,7 +54,6 @@ public class Schema {
 	 * @param inputs
 	 */
 	private void createSchema(PipedWriter[] inputs){
-		int GUIcounter = 0;
 		schema = new ArrayList<List<Perceptron>>();
 		PipedWriter[] pipesIn = inputs;
 		
@@ -98,8 +97,7 @@ public class Schema {
 					LayerOutpipes[i][j] = new PipedWriter();
 				
 				try {
-					Perceptron percep = new Perceptron(GUIcounter,pipesInJ,LayerOutpipes[i][j]);
-					GUIcounter++;
+					Perceptron percep = new Perceptron(GUIcounter++,pipesInJ,LayerOutpipes[i][j]);
 					layer.add(percep);
 				} catch (Exception e) {
 					System.err.println("Fail to create perceptron DEBUG ME");

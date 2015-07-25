@@ -7,10 +7,14 @@ import java.io.PipedWriter;
 public class Propagator extends Thread {
 	private PipedWriter[] dup;
 	private PipedReader pr;
+	private final int GUI;
 
 	
-	public Propagator(PipedWriter pw,PipedWriter[] dup) throws IOException {
+	public Propagator(final int GUI,PipedWriter pw,PipedWriter[] dup) throws IOException {
 		super();
+		
+		System.out.println("Propagator["+GUI+"] init");
+		this.GUI = GUI;
 		this.dup = dup;
 		pr = new PipedReader();
 		pr.connect(pw);
@@ -21,15 +25,24 @@ public class Propagator extends Thread {
 		super.run();
 		int c=0;
 		
+		System.out.println("Propagator["+this.GUI+"] started");
 		try {
 			while(c!=-1){ //till close pipe
+				//System.out.println("Propagator["+this.GUI+"] waiting");
 				c = pr.read();
 				System.out.println("Propagating c="+c);
-				for(PipedWriter cur_dup : dup){
-					cur_dup.write(c);
-					cur_dup.notify();
+				for(int i=0; i<dup.length; i++){
+					dup[i].write(c);
+					dup[i].notify();
 				}
 			}
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		try {
+			pr.close();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

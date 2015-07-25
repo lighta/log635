@@ -16,6 +16,14 @@ public class Perceptron extends Thread {
 	boolean isSigmoid;
 	final int GUI;		//unique identifier
 	
+	/**
+	 * Main Constructeur
+	 * Genere des poids aleatoires
+	 * @param GUI : Identifiant du percepteurs
+	 * @param inPipes : x1..xn
+	 * @param outPipe : sortie
+	 * @throws Exception : si erreur a la creation (connect)
+	 */
 	public Perceptron(final int GUI, PipedWriter[] inPipes, PipedWriter outPipe) throws Exception
 	{
 		this.GUI=GUI;
@@ -32,6 +40,18 @@ public class Perceptron extends Thread {
 		connect(inPipes,outPipe);
 	}
 	
+	/**
+	 * Constructeur avec tous les parametres d'un perceptron specifie.
+	 * (Utils pour tests)
+	 * @param GUI : Identifiant du percepteurs
+	 * @param inPipes : x1..xn
+	 * @param inputWeights : w1..wn
+	 * @param bias : x0
+	 * @param biasWeight : w0
+	 * @param outpipe : sortie
+	 * @param isSigmoid : mode de sortie
+	 * @throws Exception : si erreur a la creation (connect)
+	 */
 	public Perceptron(final int GUI, PipedWriter[] inPipes, double[] inputWeights, double bias, double biasWeight,PipedWriter outpipe, boolean isSigmoid) throws Exception
  	{		 	
 		this.GUI=GUI;
@@ -45,6 +65,12 @@ public class Perceptron extends Thread {
 		connect(inPipes,outpipe);
  	}
 	
+	/**
+	 * Function to calculate the output of this perceptron 
+	 * wheter is in Sigmoid mode or Seuil
+	 * @param inputs : list of double from the differents input
+	 * @return perceptron output
+	 */
 	public double calcOutput(double[] inputs)
 	{
 		System.out.println("Perceptron["+GUI+"] entering calc");
@@ -70,6 +96,12 @@ public class Perceptron extends Thread {
 		return out;
 	}
 	
+	/**
+	 * Function to connect to input and output stream
+	 * @param inputPipes : inpipe to connect to (get data from)
+	 * @param outPipe  : outpipe to connect to (push data to)
+	 * @throws Exception if we can't connect
+	 */
 	private void connect(PipedWriter[] inputPipes, PipedWriter outPipe) throws Exception{
 		System.out.println("Perceptron["+GUI+"] init");
 		try 
@@ -102,6 +134,9 @@ public class Perceptron extends Thread {
 		System.out.println("Perceptron["+GUI+"] connected");
 	}
 	
+	/**
+	 * Function to close streams
+	 */
 	private void disconnect(){
 		try 
 		{
@@ -122,12 +157,18 @@ public class Perceptron extends Thread {
 		} 
 	}
 	
+	/**
+	 * Function to stop gracefully a perceptron
+	 */
 	@Override
 	public void interrupt() {
 		super.interrupt();
 		running = false; //gracefully shutdown
 	}
 	
+	/**
+	 * Function to stop a perceptron without care
+	 */
 	@SuppressWarnings("deprecation")
 	@Override
 	public void destroy() {
@@ -136,6 +177,10 @@ public class Perceptron extends Thread {
 		disconnect(); //hard disconection
 	}
 	
+	/**
+	 * Perceptron handler
+	 * receive data from input then call calc
+	 */
 	public void run() {		
 		try {
 			int j = 0;
