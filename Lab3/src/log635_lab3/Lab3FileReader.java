@@ -56,8 +56,8 @@ public class Lab3FileReader {
 		    	rowNumber++;
 		    }
 		    br.close();
-		    vNormValidationSet = Normalizer.scale(vValidationSet, 1, 5);
-			vNormLearningSet = Normalizer.scale(vLearningSet, 1, 5);
+		    vNormValidationSet = Normalizer.scale(vValidationSet, 1, 5, 6);
+			vNormLearningSet = Normalizer.scale(vLearningSet, 1, 5, 6);
 		}
 		catch (Exception ex)
 		{

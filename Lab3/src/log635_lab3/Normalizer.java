@@ -1,11 +1,20 @@
 package log635_lab3;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.Iterator;
 import java.util.Vector;
 
 public class Normalizer {
 
-	static public Vector<Vector<Double>> scale(Vector<Vector<Double>> dataSet, int lowLimit, int upLimit) {
+	
+	protected static Double round(Double value, int nbDec) {
+		if (nbDec < 0) nbDec = 0;
+
+		return new BigDecimal(value).setScale(nbDec, RoundingMode.HALF_UP).doubleValue();
+	}
+	
+	static public Vector<Vector<Double>> scale(Vector<Vector<Double>> dataSet, int lowLimit, int upLimit, int nbDec) {
 		Double min = 0.0, max = 0.0;
 		boolean minMaxInit = true;
 		Vector<Vector<Double>> set = new Vector<Vector<Double>>();
@@ -40,7 +49,7 @@ public class Normalizer {
 
 						final Double normVal = lowLimit + ((val - min)*(upLimit-lowLimit))
 								/ ((max - min) != 0 ? (max - min) : 1);
-						vline.add(normVal);
+						vline.add(round(normVal, 6));
 
 					}
 				}
