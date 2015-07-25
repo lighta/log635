@@ -7,7 +7,9 @@ public class Lab3FileReader {
 
 	private Vector<String> vHeaders;
 	Vector<Vector<Double>> vLearningSet;
-	Vector<Vector<Double>> vValidationSet;	
+	Vector<Vector<Double>> vValidationSet;
+	Vector<Vector<Double>> vNormLearningSet;
+	Vector<Vector<Double>> vNormValidationSet;
 	
 	public Lab3FileReader(String strFilePath, int primitiveCnt, int learningLineVSValidLine) {
 		
@@ -54,6 +56,8 @@ public class Lab3FileReader {
 		    	rowNumber++;
 		    }
 		    br.close();
+		    vNormValidationSet = Normalizer.scale(vValidationSet, 1, 5, 6);
+			vNormLearningSet = Normalizer.scale(vLearningSet, 1, 5, 6);
 		}
 		catch (Exception ex)
 		{
@@ -74,6 +78,14 @@ public class Lab3FileReader {
 	
 	public Vector<Double> GetValidationSetDataRows(int i) {
 		return vValidationSet.elementAt(i);
+	}
+	
+	public Vector<Double> GetNormLearningSetDataRows(int i) {
+		return vNormLearningSet.elementAt(i);
+	}
+	
+	public Vector<Double> GetNormValidationSetDataRows(int i) {
+		return vNormValidationSet.elementAt(i);
 	}
 
 	public int GetLearningSetSize() {
