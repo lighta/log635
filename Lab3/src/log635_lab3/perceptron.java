@@ -16,9 +16,12 @@ public class perceptron extends Thread {
 	private double biasWeight;
 	private PipedWriter outPipe;
 	boolean isSigmoid;
+	final int GUI;		//unique identifier
 	
 	public perceptron(PipedWriter[] inPipes, PipedWriter outPipe) throws Exception
 	{
+	//	this.GUI=GUI;
+		GUI = 0;
 		this.bias = 1;
 		this.biasWeight = 1;
 		this.outPipe = outPipe;
@@ -31,8 +34,9 @@ public class perceptron extends Thread {
 		connect(inPipes,outPipe);
 	}
 	
-	public perceptron(PipedWriter[] inPipes, double[] inputWeights, double bias, double biasWeight,PipedWriter outpipe, boolean isSigmoid) throws Exception
+	public perceptron(final int GUI, PipedWriter[] inPipes, double[] inputWeights, double bias, double biasWeight,PipedWriter outpipe, boolean isSigmoid) throws Exception
  	{		 	
+		this.GUI=GUI;
 		this.inputWeights = inputWeights;		
 		this.bias = bias;
 		this.biasWeight = biasWeight;	
@@ -45,16 +49,16 @@ public class perceptron extends Thread {
 	
 	public double calcOutput(double[] inputs)
 	{
-		System.out.println("Perceptron entering calc");
+		System.out.println("Perceptron["+GUI+"] entering calc");
 		double sum = 0, out=0;
 		// Calc the perceptron value.
 		for(int i=0; i < inputs.length; i++)
 		{
 			sum += inputs[i] * inputWeights[i];
-			System.out.println("Perceptron in["+i+"]="+(inputs[i] * inputWeights[i]));
+			System.out.println("Perceptron["+GUI+"] in["+i+"]="+(inputs[i] * inputWeights[i]));
 		}
 		sum += bias * biasWeight;
-		System.out.println("Perceptron bias="+(bias * biasWeight)+" sum="+sum+" mode="+((isSigmoid)?"sigmoid":"seuil"));
+		System.out.println("Perceptron["+GUI+"] bias="+(bias * biasWeight)+" sum="+sum+" mode="+((isSigmoid)?"sigmoid":"seuil"));
 					
 		if(isSigmoid){
 			// Activation function in this case sigmoid.
@@ -64,12 +68,12 @@ public class perceptron extends Thread {
 			out = (sum >= 0)?1:0; //1 or 0
 		}
 		
-		System.out.println("Perceptron calc done => out="+out);
+		System.out.println("Perceptron["+GUI+"] calc done => out="+out);
 		return out;
 	}
 	
 	private void connect(PipedWriter[] inputPipes, PipedWriter outPipe) throws Exception{
-		System.out.println("Perceptron init stared");
+		System.out.println("Perceptron["+GUI+"] init");
 		try 
 		{
 			// Connect InputPipes to upstream filters
@@ -77,27 +81,27 @@ public class perceptron extends Thread {
 			{
 				this.inputPipes[i] = new PipedReader();
 				this.inputPipes[i].connect(inputPipes[i]);
-				System.out.println("Perceptron["+i+"]:: connected to upstream filters.");
+				System.out.println("Perceptron["+GUI+"]["+i+"]:: connected to upstream filters.");
 			}
-			System.out.println("Perceptrons:: connected to upstream filters.");
+			System.out.println("Perceptrons["+GUI+"]:: connected to upstream filters.");
 		} 
 		catch (Exception Error) 
 		{
-			System.out.println("Perceptrons:: Error connecting input pipes.");
+			System.out.println("Perceptrons["+GUI+"]:: Error connecting input pipes.");
 			throw Error;
 		} 
 		try 
 		{
 			// Connect outputPipe to downstream filter
 			this.outPipe = outPipe;
-			System.out.println("Perceptrons:: connected to downstream filter.");
+			System.out.println("Perceptrons["+GUI+"]:: connected to downstream filter.");
 		} 
 		catch (Exception Error) 
 		{
-			System.out.println("Perceptrons:: Error while connecting output pipe.");
+			System.out.println("Perceptrons["+GUI+"]:: Error while connecting output pipe.");
 			throw Error;
 		} 
-		System.out.println("Perceptron init done (connected)");
+		System.out.println("Perceptron["+GUI+"] connected");
 	}
 	
 	private void disconnect(){
@@ -106,17 +110,17 @@ public class perceptron extends Thread {
 			for(int i=0; i < this.inputPipes.length; i++)
 			{ 
 				inputPipes[i].close();
-				System.out.println("Perceptron["+i+"]:: inputs pipes closed.");
+				System.out.println("Perceptron["+GUI+"]["+i+"]:: inputs pipes closed.");
 			}
-			System.out.println("Perceptron:: inputs pipes closed.");
+			System.out.println("Perceptron["+GUI+"]:: inputs pipes closed.");
 			
 			outPipe.close();
-			System.out.println("Perceptron:: output pipe closed.");
+			System.out.println("Perceptron["+GUI+"]:: output pipe closed.");
 			
 		} 
 		catch (Exception Error) 
 		{
-			System.out.println("Perceptron:: Error while closing pipes.");
+			System.out.println("Perceptron["+GUI+"]:: Error while closing pipes.");
 		} 
 	}
 	
@@ -128,7 +132,7 @@ public class perceptron extends Thread {
 			for(int i=0; i < this.inputPipes.length; i++)
 				closepipe[j] = false; // For each inputPipes.
 
-			System.out.println("Perceptron started");
+			System.out.println("Perceptron["+GUI+"] started");
 			
 			running = true;
 			while (running) 
@@ -163,7 +167,7 @@ public class perceptron extends Thread {
 						if (value == '\n') {  // End of line	
 							inputsValue[i] = Double.parseDouble( lineOfText.toString() );
 							EOL = true;
-							System.out.println("Perceptron["+i+"] received="+inputsValue[i]);
+							System.out.println("Perceptron["+GUI+"]["+i+"] received="+inputsValue[i]);
 						}
 					}
 				}
@@ -171,11 +175,11 @@ public class perceptron extends Thread {
 				outPipe.write(res + "\n");
 				outPipe.flush();
 			} 	
-			System.out.println("Perceptron stopped");
+			System.out.println("Perceptron["+GUI+"] stopped");
 		} 
 		catch (Exception error) 
 		{
-			System.out.println("Perceptron:: Interrupted. error="+error);
+			System.out.println("Perceptron["+GUI+"]:: Interrupted. error="+error);
 			error.printStackTrace();
 		} 
 		disconnect();
@@ -216,16 +220,25 @@ public class perceptron extends Thread {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		
+		try {
+			entree.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		return valsortie;
 	}
 	
 	public static void main(String[] args) {
 		System.out.println("Perception main, quicktest");
 		PipedWriter[] inputPipes = new PipedWriter[2]; //x1 et x2
+		PipedWriter[] OUinputPipes = new PipedWriter[2]; //x1 et x2
 		double inputPipesW[] = new double[2];
 
 		for(int i=0; i < inputPipes.length; i++){
 			inputPipes[i] = new PipedWriter();
+			OUinputPipes[i] = new PipedWriter();
 			inputPipesW[i] = 1.0;
 		}
 		PipedWriter EToutPipe = new PipedWriter();
@@ -233,10 +246,10 @@ public class perceptron extends Thread {
 		//PipedWriter[] inpipe, double[] inputWeights, double bias, double biasWeight,PipedWriter outpipe, boolean isSigmoid
 		perceptron ETpercep, OUpercep;
 		try {
-			ETpercep = new perceptron(inputPipes,inputPipesW,-1.5,1,EToutPipe,false);
-		//	OUpercep = new perceptron(inputPipes,inputPipesW,-0.5,1,OUoutPipe,false);
+			ETpercep = new perceptron(0,inputPipes,inputPipesW,-1.5,1,EToutPipe,false);
+			OUpercep = new perceptron(1,OUinputPipes,inputPipesW,-0.5,1,OUoutPipe,false);
 			ETpercep.start();
-		//	OUpercep.start();
+			OUpercep.start();
 		} catch (Exception e) {
 			System.exit(1);
 		}
@@ -244,9 +257,16 @@ public class perceptron extends Thread {
 		try {
 			inputPipes[0].write("0\n1\n0\n1\n"); //0101
 			inputPipes[1].write("0\n0\n1\n1\n"); //0011
+			
+			OUinputPipes[0].write("0\n1\n0\n1\n"); //0101
+			OUinputPipes[1].write("0\n0\n1\n1\n"); //0011
+			
 			//we hot like that that we know we can close the stream now
 			inputPipes[0].close();	
 			inputPipes[1].close();
+			
+			OUinputPipes[0].close();	
+			OUinputPipes[1].close();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -254,7 +274,7 @@ public class perceptron extends Thread {
 		List<Double> sETpercep = readSortie(EToutPipe);
 		System.out.println("Sortie ET perceptron sETpercep="+sETpercep);
 		
-	//	List<Double> sOUpercep = readSortie(OUoutPipe);
-	//	System.out.println("Sortie OU perceptron sETpercep="+sOUpercep);	
+		List<Double> sOUpercep = readSortie(OUoutPipe);
+		System.out.println("Sortie OU perceptron sOUpercep="+sOUpercep);	
 	}
 }
