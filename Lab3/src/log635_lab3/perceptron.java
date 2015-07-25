@@ -187,7 +187,10 @@ public class perceptron extends Thread {
 				double res = calcOutput(inputsValue);
 				outPipe.write(res + "\n");
 				outPipe.flush();
-			} 	
+			}
+			synchronized(this){
+				this.notifyAll(); //tell them we have finish
+			}
 			System.out.println("Perceptron["+GUI+"] stopped");
 		} 
 		catch (Exception error) 
