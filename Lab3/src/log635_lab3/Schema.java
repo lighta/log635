@@ -193,14 +193,6 @@ public class Schema {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
-		
-		try {
-			Thread.sleep(1000); //waiting end init
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} 
-		
 		Utils.test_shoutData(inputPipes);
 		List<Double> sch_out = Utils.readSortie(readfinal);
 		System.out.println("Sortie sch1="+sch_out);
@@ -211,8 +203,8 @@ public class Schema {
 		System.out.println("Schema main, quicktest");
 		int nbPerceptron1[] = {1};
 		test_sch1(1, 1, nbPerceptron1);
-		
-		//int nbPerceptron2[] = {2,1};
-		//test_sch1(2,2, nbPerceptron2 );
+		System.out.println("\n\n");
+		int nbPerceptron2[] = {2,1};
+		test_sch1(2,2, nbPerceptron2 );
 	}
 }

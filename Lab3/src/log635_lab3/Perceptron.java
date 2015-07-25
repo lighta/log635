@@ -86,11 +86,11 @@ public class Perceptron extends Thread {
 		{
 			sum += inputs[i] * inputWeights[i];
 			if(debug)
-				_sb.append("\t in["+i+"]="+(inputs[i] * inputWeights[i]));
+				_sb.append("\t in["+i+"]="+inputs[i]+" w="+inputWeights[i]+" inw="+(inputs[i]*inputWeights[i]+"\n") );
 		}
 		sum += bias * biasWeight;
 		if(debug)
-			_sb.append("\t bias="+(bias * biasWeight)+" sum="+sum+" mode="+((isSigmoid)?"sigmoid":"seuil"));
+			_sb.append("\t bias="+(bias * biasWeight)+" sum="+sum+" mode="+((isSigmoid)?"sigmoid":"seuil")+"\n");
 					
 		if(isSigmoid){
 			// Activation function in this case sigmoid.
@@ -218,6 +218,7 @@ public class Perceptron extends Thread {
 					boolean EOL = false; // End Of Line.
 					StringBuilder lineOfText = new StringBuilder();
 					
+					inputsValue[i] = -1;
 					while(EOL == false)
 					{
 						int value; // The value read from the pipe.
@@ -238,9 +239,11 @@ public class Perceptron extends Thread {
 						}
 					}
 				}
-				double res = calcOutput(inputsValue);
-				outPipe.write(res + "\n");
-				outPipe.flush();
+				if(running && inputsValue[0]!=-1){
+					double res = calcOutput(inputsValue);
+					outPipe.write(res + "\n");
+					outPipe.flush();
+				}
 			}
 			synchronized(this){
 				this.notifyAll(); //tell them we have finish
