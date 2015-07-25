@@ -28,7 +28,7 @@ public class Main {
 		// Print the entire learning set.
 		for (int i = 0; i < lb3fr.GetLearningSetSize(); i++)
 		{
-			System.out.println(lb3fr.GetLearningSetDataRows(i));
+			System.out.println(lb3fr.GetNormLearningSetDataRows(i));
 		}
 		
 		System.out.println("#######################################");
@@ -36,7 +36,7 @@ public class Main {
 		// Print the entire validation set.
 		for (int i = 0; i < lb3fr.GetValidationSetSize(); i++)
 		{
-			System.out.println(lb3fr.GetValidationSetDataRows(i));
+			System.out.println(lb3fr.GetNormValidationSetDataRows(i));
 		}
 		
 		System.out.println("#######################################");
