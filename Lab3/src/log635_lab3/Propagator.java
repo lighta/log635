@@ -25,9 +25,9 @@ public class Propagator extends Thread {
 			while(c!=-1){ //till close pipe
 				c = pr.read();
 				System.out.println("Propagating c="+c);
-				for(PipedWriter pw : dup){
-					pw.write(c);
-					pw.notify();
+				for(PipedWriter cur_dup : dup){
+					cur_dup.write(c);
+					cur_dup.notify();
 				}
 			}
 		} catch (IOException e) {

@@ -6,7 +6,7 @@ import java.nio.file.Paths;
 import java.util.*;
 
 
-public class main {
+public class Main {
 	
 	private double learningRate = 0.1;
 	private static int nbLayer = 2;
@@ -47,7 +47,7 @@ public class main {
 		for (int i = 0; i < inpipe.length; i++)
 			inpipe[i] = new PipedWriter();
 		PipedWriter finalout = new PipedWriter();
-		schema neuralNetwork = new schema(nbLayer, perceptronCntByLayer, inpipe, finalout);
+		Schema neuralNetwork = new Schema(nbLayer, perceptronCntByLayer, inpipe, finalout);
 		
 		/*
 		int[] nbper = {7,6,5};
@@ -58,7 +58,7 @@ public class main {
 	}
 	
 	//learn
-	public static boolean learn(final int maxtotaltry, final int maxtry, final schema sch){
+	public static boolean learn(final int maxtotaltry, final int maxtry, final Schema sch){
 		boolean success = false;
 		int nbtry=0, nbtotaltry=0;
 		int i=0,j=0;

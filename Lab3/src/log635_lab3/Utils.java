@@ -6,7 +6,7 @@ import java.io.PipedWriter;
 import java.util.ArrayList;
 import java.util.List;
 
-public class utils {
+public class Utils {
 	public static void test_shoutData(PipedWriter[] inputPipes){
 		//simulate shout data
 		try {

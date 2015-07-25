@@ -6,23 +6,23 @@ import java.io.PipedWriter;
 import java.util.ArrayList;
 import java.util.List;
 
-public class schema {
+public class Schema {
 	private int nbLayer = 0;
 	private int nbPerceptron[];
-	private List<List<perceptron>> schema;
+	private List<List<Perceptron>> schema;
 	private boolean started = false;
 	private PipedWriter finalout;
 	
 	
-	public List<List<perceptron>> getSchema() {
+	public List<List<Perceptron>> getSchema() {
 		return schema;
 	}
 
-	public void setSchema(List<List<perceptron>> schema) {
+	public void setSchema(List<List<Perceptron>> schema) {
 		this.schema = schema;
 	}
 
-	public schema(int nbLayer, int nbPerceptron[], PipedWriter[] inputs,PipedWriter finalout) {
+	public Schema(int nbLayer, int nbPerceptron[], PipedWriter[] inputs,PipedWriter finalout) {
 		super();
 		this.nbLayer = nbLayer; 
 		this.nbPerceptron = nbPerceptron;
@@ -55,13 +55,13 @@ public class schema {
 	 */
 	private void createSchema(PipedWriter[] inputs){
 		int GUIcounter = 0;
-		schema = new ArrayList<List<perceptron>>();
+		schema = new ArrayList<List<Perceptron>>();
 		PipedWriter[] pipesIn = inputs;
 		
 		PipedWriter[][] LayerOutpipes = new PipedWriter[this.nbLayer][];
 		
 		for(int i=0; i < this.nbLayer; i++){ 
-			List<perceptron> layer = new ArrayList<>();
+			List<Perceptron> layer = new ArrayList<>();
 			final int sz = nbPerceptron[i]; // nb perceptron for this layer.
 			LayerOutpipes[i] = new PipedWriter[sz]; // Number of outputs/ inputs for the next layer.
 			
@@ -98,7 +98,7 @@ public class schema {
 					LayerOutpipes[i][j] = new PipedWriter();
 				
 				try {
-					perceptron percep = new perceptron(GUIcounter,pipesInJ,LayerOutpipes[i][j]);
+					Perceptron percep = new Perceptron(GUIcounter,pipesInJ,LayerOutpipes[i][j]);
 					GUIcounter++;
 					layer.add(percep);
 				} catch (Exception e) {
@@ -186,7 +186,7 @@ public class schema {
 		PipedWriter finalout = new PipedWriter();
 		PipedReader readfinal = new PipedReader();
 		
-		schema sch = new schema(nbcouche,nbPerceptron,inputPipes,finalout);
+		Schema sch = new Schema(nbcouche,nbPerceptron,inputPipes,finalout);
 		sch.start();
 		
 		try {
@@ -195,8 +195,8 @@ public class schema {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
-		utils.test_shoutData(inputPipes);
-		List<Double> sch_out = utils.readSortie(readfinal);
+		Utils.test_shoutData(inputPipes);
+		List<Double> sch_out = Utils.readSortie(readfinal);
 		System.out.println("Sortie sch1="+sch_out);
 		sch.waitFinished(); //ensure all is done before quitting test
 	}
@@ -212,7 +212,7 @@ public class schema {
 		PipedWriter finalout = new PipedWriter();
 		PipedReader readfinal = new PipedReader();
 		
-		schema sch = new schema(nbcouche,nbPerceptron,inputPipes,finalout);
+		Schema sch = new Schema(nbcouche,nbPerceptron,inputPipes,finalout);
 		sch.start();
 		
 		try {
@@ -221,9 +221,9 @@ public class schema {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
-		List<Double> sch_out = utils.readSortie(readfinal);
+		List<Double> sch_out = Utils.readSortie(readfinal);
 		System.out.println("Sortie sch2="+sch_out);
-		utils.test_shoutData(inputPipes);
+		Utils.test_shoutData(inputPipes);
 		sch.waitFinished(); //ensure all is done before quitting test
 	}
 	

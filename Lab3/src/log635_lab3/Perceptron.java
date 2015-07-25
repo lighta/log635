@@ -1,13 +1,11 @@
 package log635_lab3;
 
-import java.io.IOException;
 import java.io.PipedReader;
 import java.io.PipedWriter;
 import java.lang.Math;
-import java.util.ArrayList;
 import java.util.List;
 
-public class perceptron extends Thread {
+public class Perceptron extends Thread {
 	boolean running;
 	
 	private PipedReader[] inputPipes;
@@ -18,7 +16,7 @@ public class perceptron extends Thread {
 	boolean isSigmoid;
 	final int GUI;		//unique identifier
 	
-	public perceptron(final int GUI, PipedWriter[] inPipes, PipedWriter outPipe) throws Exception
+	public Perceptron(final int GUI, PipedWriter[] inPipes, PipedWriter outPipe) throws Exception
 	{
 		this.GUI=GUI;
 		this.bias = 1;
@@ -34,7 +32,7 @@ public class perceptron extends Thread {
 		connect(inPipes,outPipe);
 	}
 	
-	public perceptron(final int GUI, PipedWriter[] inPipes, double[] inputWeights, double bias, double biasWeight,PipedWriter outpipe, boolean isSigmoid) throws Exception
+	public Perceptron(final int GUI, PipedWriter[] inPipes, double[] inputWeights, double bias, double biasWeight,PipedWriter outpipe, boolean isSigmoid) throws Exception
  	{		 	
 		this.GUI=GUI;
 		this.inputWeights = inputWeights;		
@@ -130,6 +128,7 @@ public class perceptron extends Thread {
 		running = false; //gracefully shutdown
 	}
 	
+	@SuppressWarnings("deprecation")
 	@Override
 	public void destroy() {
 		super.destroy();
@@ -216,10 +215,10 @@ public class perceptron extends Thread {
 		PipedWriter EToutPipe = new PipedWriter();
 		PipedWriter OUoutPipe = new PipedWriter();
 		//PipedWriter[] inpipe, double[] inputWeights, double bias, double biasWeight,PipedWriter outpipe, boolean isSigmoid
-		perceptron ETpercep, OUpercep;
+		Perceptron ETpercep, OUpercep;
 		try {
-			ETpercep = new perceptron(0,inputPipes,inputPipesW,-1.5,1,EToutPipe,false);
-			OUpercep = new perceptron(1,OUinputPipes,inputPipesW,-0.5,1,OUoutPipe,false);
+			ETpercep = new Perceptron(0,inputPipes,inputPipesW,-1.5,1,EToutPipe,false);
+			OUpercep = new Perceptron(1,OUinputPipes,inputPipesW,-0.5,1,OUoutPipe,false);
 			ETpercep.start();
 			OUpercep.start();
 		} catch (Exception e) {
@@ -237,13 +236,13 @@ public class perceptron extends Thread {
 			System.exit(1);
 		}
 		
-		utils.test_shoutData(inputPipes);
-		utils.test_shoutData(OUinputPipes);
+		Utils.test_shoutData(inputPipes);
+		Utils.test_shoutData(OUinputPipes);
 		
-		List<Double> sETpercep = utils.readSortie(ETentree);
+		List<Double> sETpercep = Utils.readSortie(ETentree);
 		System.out.println("Sortie ET perceptron sETpercep="+sETpercep);
 		
-		List<Double> sOUpercep = utils.readSortie(OUentree);
+		List<Double> sOUpercep = Utils.readSortie(OUentree);
 		System.out.println("Sortie OU perceptron sOUpercep="+sOUpercep);	
 	}
 }
