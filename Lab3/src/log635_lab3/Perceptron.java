@@ -122,9 +122,9 @@ public class Perceptron extends Thread {
 			{
 				this.inputPipes[i] = new PipedReader();
 				this.inputPipes[i].connect(inputPipes[i]);
-				System.out.println("Perceptron["+GUI+"]["+i+"]:: connected to upstream filters.");
+				//System.out.println("Perceptron["+GUI+"]["+i+"]:: connected to upstream filters.");
 			}
-			System.out.println("Perceptrons["+GUI+"]:: connected to upstream filters.");
+			//System.out.println("Perceptrons["+GUI+"]:: connected to upstream filters.");
 		} 
 		catch (Exception Error) 
 		{
@@ -135,7 +135,7 @@ public class Perceptron extends Thread {
 		{
 			// Connect outputPipe to downstream filter
 			this.outPipe = outPipe;
-			System.out.println("Perceptrons["+GUI+"]:: connected to downstream filter.");
+			//System.out.println("Perceptrons["+GUI+"]:: connected to downstream filter.");
 		} 
 		catch (Exception Error) 
 		{
@@ -154,18 +154,19 @@ public class Perceptron extends Thread {
 			for(int i=0; i < this.inputPipes.length; i++)
 			{ 
 				inputPipes[i].close();
-				System.out.println("Perceptron["+GUI+"]["+i+"]:: inputs pipes closed.");
+				//System.out.println("Perceptron["+GUI+"]["+i+"]:: inputs pipes closed.");
 			}
-			System.out.println("Perceptron["+GUI+"]:: inputs pipes closed.");
+			//System.out.println("Perceptron["+GUI+"]:: inputs pipes closed.");
 			
 			outPipe.close();
-			System.out.println("Perceptron["+GUI+"]:: output pipe closed.");
+			//System.out.println("Perceptron["+GUI+"]:: output pipe closed.");
 			
 		} 
 		catch (Exception Error) 
 		{
 			System.out.println("Perceptron["+GUI+"]:: Error while closing pipes.");
-		} 
+		}
+		System.out.println("Perceptron["+GUI+"] disconnected");
 	}
 	
 	/**
