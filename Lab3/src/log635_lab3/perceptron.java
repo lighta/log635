@@ -28,6 +28,7 @@ public class perceptron extends Thread {
 		this.isSigmoid = true;
 		
 		inputPipes = new PipedReader[inPipes.length];
+		inputWeights = new double[inPipes.length];
 		for(int i=0; i < inPipes.length; i++){ // Randomize every weights.
 			inputWeights[i] = Math.random();
 		}
@@ -124,6 +125,18 @@ public class perceptron extends Thread {
 		} 
 	}
 	
+	@Override
+	public void interrupt() {
+		super.interrupt();
+		running = false; //gracefully shutdown
+	}
+	
+	@Override
+	public void destroy() {
+		super.destroy();
+		running = false;
+		disconnect(); //hard disconection
+	}
 	
 	public void run() {		
 		try {
@@ -185,12 +198,13 @@ public class perceptron extends Thread {
 		disconnect();
 	}
 	
-	private static List<Double> readSortie(PipedWriter sortie){
-		PipedReader entree = new PipedReader();
+	private static List<Double> readSortie(PipedReader entree){
+		if(entree==null) //useless but whatever
+			return null;
+		
 		List<Double> valsortie = new ArrayList<>();
 		try {
 			boolean done=false;
-			entree.connect(sortie);
 			
 			while(done==false){
 				double val=0;
@@ -254,7 +268,18 @@ public class perceptron extends Thread {
 			System.exit(1);
 		}
 		
-		try {
+		PipedReader ETentree = null, OUentree = null;
+		try { //make ourself ready to receive data
+			ETentree = new PipedReader();
+			OUentree = new PipedReader();
+			ETentree.connect(EToutPipe);
+			OUentree.connect(OUoutPipe);
+		}
+		catch (Exception e) {
+			System.exit(1);
+		}
+		
+		try { //simulate shout data
 			inputPipes[0].write("0\n1\n0\n1\n"); //0101
 			inputPipes[1].write("0\n0\n1\n1\n"); //0011
 			
@@ -271,10 +296,10 @@ public class perceptron extends Thread {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		List<Double> sETpercep = readSortie(EToutPipe);
+		List<Double> sETpercep = readSortie(ETentree);
 		System.out.println("Sortie ET perceptron sETpercep="+sETpercep);
 		
-		List<Double> sOUpercep = readSortie(OUoutPipe);
+		List<Double> sOUpercep = readSortie(OUentree);
 		System.out.println("Sortie OU perceptron sOUpercep="+sOUpercep);	
 	}
 }

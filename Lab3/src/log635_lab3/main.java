@@ -44,7 +44,10 @@ public class main {
 	
 		// Create the neural network.
 		PipedWriter[] inpipe = new PipedWriter[7];
-		schema neuralNetwork = new schema(nbLayer, perceptronCntByLayer, inpipe);
+		for (int i = 0; i < inpipe.length; i++)
+			inpipe[i] = new PipedWriter();
+		PipedWriter finalout = new PipedWriter();
+		schema neuralNetwork = new schema(nbLayer, perceptronCntByLayer, inpipe, finalout);
 		
 		/*
 		int[] nbper = {7,6,5};
