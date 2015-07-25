@@ -14,7 +14,9 @@ public class Perceptron extends Thread {
 	private double biasWeight;
 	private PipedWriter outPipe;
 	boolean isSigmoid;
-	final int GUI;		//unique identifier
+	private final int GUI;		//unique identifier
+
+	private boolean debug = true;
 	
 	/**
 	 * Main Constructeur
@@ -73,16 +75,22 @@ public class Perceptron extends Thread {
 	 */
 	public double calcOutput(double[] inputs)
 	{
-		System.out.println("Perceptron["+GUI+"] entering calc");
+		StringBuilder _sb = null;
+		if(debug ){
+			_sb = new StringBuilder();
+			_sb.append("Perceptron["+GUI+"] entering calc\n");
+		}
 		double sum = 0, out=0;
 		// Calc the perceptron value.
 		for(int i=0; i < inputs.length; i++)
 		{
 			sum += inputs[i] * inputWeights[i];
-			System.out.println("Perceptron["+GUI+"] in["+i+"]="+(inputs[i] * inputWeights[i]));
+			if(debug)
+				_sb.append("\t in["+i+"]="+(inputs[i] * inputWeights[i]));
 		}
 		sum += bias * biasWeight;
-		System.out.println("Perceptron["+GUI+"] bias="+(bias * biasWeight)+" sum="+sum+" mode="+((isSigmoid)?"sigmoid":"seuil"));
+		if(debug)
+			_sb.append("\t bias="+(bias * biasWeight)+" sum="+sum+" mode="+((isSigmoid)?"sigmoid":"seuil"));
 					
 		if(isSigmoid){
 			// Activation function in this case sigmoid.
@@ -92,7 +100,10 @@ public class Perceptron extends Thread {
 			out = (sum >= 0)?1:0; //1 or 0
 		}
 		
-		System.out.println("Perceptron["+GUI+"] calc done => out="+out);
+		if(debug){
+			_sb.append("\t calc done => out="+out);
+			System.out.println(_sb);
+		}
 		return out;
 	}
 	

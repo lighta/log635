@@ -30,10 +30,10 @@ public class Propagator extends Thread {
 			while(c!=-1){ //till close pipe
 				//System.out.println("Propagator["+this.GUI+"] waiting");
 				c = pr.read();
-				System.out.println("Propagating c="+c);
+				//System.out.println("Propagating c="+c);
 				for(int i=0; i<dup.length; i++){
 					dup[i].write(c);
-					dup[i].notify();
+					dup[i].flush();
 				}
 			}
 		} catch (IOException e) {

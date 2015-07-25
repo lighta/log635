@@ -69,7 +69,7 @@ public class Schema {
 			}
 			
 			PipedWriter[][] dup = null;
-			if(sz > 0){ //create Multiplexing for pipes
+			if(sz > 1){ //create Multiplexing for pipes
 				dup = new PipedWriter[pipesIn.length][sz];
 				for(int l=0; l < pipesIn.length; l++){
 					for(int k=0; k < sz; k++){
@@ -86,7 +86,7 @@ public class Schema {
 			
 			for(int j=0; j < sz; j++) { //iterate foreach perceptron
 				PipedWriter[] pipesInJ;
-				if(sz > 0)
+				if(sz > 1)
 					pipesInJ = dup[j];	//separate array for each perceptron
 				else
 					pipesInJ = pipesIn;
@@ -173,10 +173,10 @@ public class Schema {
 	}
 
 	
-	private static void test_sch1(){
-		System.out.println("Testing schema 1");
-		int nbcouche = 1;
-		int nbPerceptron[] = {1};
+	private static void test_sch1(final int id, final int nbcouche,final int nbPerceptron[]){
+		System.out.println("Testing schema "+id);
+		//int nbcouche = 1;
+		//int nbPerceptron[] = {1};
 		PipedWriter[] inputPipes = new PipedWriter[2]; //x1 et x2
 		inputPipes[0] = new PipedWriter();
 		inputPipes[1] = new PipedWriter();
@@ -193,41 +193,26 @@ public class Schema {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
+		
+		try {
+			Thread.sleep(1000); //waiting end init
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} 
+		
 		Utils.test_shoutData(inputPipes);
 		List<Double> sch_out = Utils.readSortie(readfinal);
 		System.out.println("Sortie sch1="+sch_out);
 		sch.waitFinished(); //ensure all is done before quitting test
 	}
 	
-	private static void test_sch2(){
-		System.out.println("Testing schema 2");
-		int nbcouche = 2;
-		int nbPerceptron[] = {2,1};
-		PipedWriter[] inputPipes = new PipedWriter[2]; //x1 et x2
-		inputPipes[0] = new PipedWriter();
-		inputPipes[1] = new PipedWriter();
-		
-		PipedWriter finalout = new PipedWriter();
-		PipedReader readfinal = new PipedReader();
-		
-		Schema sch = new Schema(nbcouche,nbPerceptron,inputPipes,finalout);
-		sch.start();
-		
-		try {
-			readfinal.connect(finalout);
-		} catch (IOException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
-		List<Double> sch_out = Utils.readSortie(readfinal);
-		System.out.println("Sortie sch2="+sch_out);
-		Utils.test_shoutData(inputPipes);
-		sch.waitFinished(); //ensure all is done before quitting test
-	}
-	
 	public static void main(String[] args) {
 		System.out.println("Schema main, quicktest");
-		//test_sch1();
-		test_sch2();
+		int nbPerceptron1[] = {1};
+		test_sch1(1, 1, nbPerceptron1);
+		
+		//int nbPerceptron2[] = {2,1};
+		//test_sch1(2,2, nbPerceptron2 );
 	}
 }
