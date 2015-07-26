@@ -8,10 +8,11 @@ import java.util.*;
 
 public class Main {
 	
-	private double learningRate = 0.1;
+	private static double learningRate = 0.1;
 	private static int nbLayer = 2;
 	private static int[] perceptronCntByLayer = {2,1};
 	private static int primitiveCnt = 12;
+	private static double derivedNetworkError;
 	private static int validationLineRate = 10; // Valid rate is calculated in a modulo so in short 1/var.
 	
 	public static void main(String[] args) {
@@ -59,18 +60,46 @@ public class Main {
 	
 	//learn
 	public static boolean learn(final int maxtotaltry, final int maxtry, final Schema sch){
+		derivedNetworkError = 0;
 		boolean success = false;
 		int nbtry=0, nbtotaltry=0;
 		int i=0,j=0;
 		
-		final int nbcouche=sch.getSchema().size();
-		while(nbcouche > i++){
-			final int nbpercepcouche=sch.getSchema().get(i).size();
-			while(nbpercepcouche > j++){
+		final int nbLayer=sch.getSchema().size();
+		while(nbLayer > i)
+		{
+			final int nbPerceptByLayer=sch.getSchema().get(i).size();
+			while(nbPerceptByLayer > j)
+			{
 				sch.getSchema().get(i).get(j).start(); //starting all perceptron
+				j++;
 			}
+			i++;
 		}
-		while(!success && maxtotaltry > nbtotaltry++){
+		while(i >= 0)
+		{
+			if(i == nbLayer)
+			{
+				sch.getSchema().get(i).get(j).calcLocalError(desiredOutput, sch.getSchema().get(i).get(j).getOutput());
+				derivedNetworkError += sch.getSchema().get(i).get(j).getLocalError();
+				sch.getSchema().get(i).get(j).modifyWeight(learningRate);
+			}
+			else
+			{
+				
+			}
+			
+			while(j >= 0)
+			{
+				
+				j--;
+			}
+			
+			i--;
+		}
+		
+		
+		/*while(!success && maxtotaltry > nbtotaltry++){
 			while(maxtry > nbtry++)
 			{
 				//foreach readline learndata
@@ -83,7 +112,7 @@ public class Main {
 				//test
 				//if errorResult < epsilon
 					//report and end
-		}
+		}*/
 		return false;
 	}
 }

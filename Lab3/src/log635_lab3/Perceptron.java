@@ -126,13 +126,14 @@ public class Perceptron extends Thread {
 		localError = actualOutput - desiredOutput;
 	}
 	
-	public void modifyWeight(double learningFactor, double derivedNetworkError)
+	public void modifyWeight(double learningFactor)
 	{
-		biasWeight += -1 * learningFactor * derivedNetworkError;
+		double delta; 
 		int i = 0;
+		delta = learningFactor * (localError * activatedPercepTotal * (1- activatedPercepTotal)) * activatedPercepTotal;
 		while ( i < inputWeights.length)
 		{
-			inputWeights[i] += -1 * learningFactor * derivedNetworkError;
+			inputWeights[i] += delta;
 			i++;
 		}
 	}
