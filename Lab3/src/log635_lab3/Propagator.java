@@ -20,6 +20,17 @@ public class Propagator extends Thread {
 		pr.connect(pw);
 	}
 	
+	private void disconnect(){
+		try {
+			pr.close();
+			for(int i=0; i<dup.length; i++)
+				dup[i].close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
 	@Override
 	public void run() {
 		super.run();
@@ -27,10 +38,12 @@ public class Propagator extends Thread {
 		
 		System.out.println("Propagator["+this.GUI+"] started");
 		try {
-			while(c!=-1){ //till close pipe
+			while(true){ //till close pipe
 				//System.out.println("Propagator["+this.GUI+"] waiting");
 				c = pr.read();
-				System.out.println("Propagating["+GUI+"] c="+c);
+				if(c==-1)
+					break;
+				System.out.println("Propagating["+GUI+"] c="+c+" ch"+((char)c) );
 				for(int i=0; i<dup.length; i++){
 					dup[i].write(c);
 					dup[i].flush();
@@ -40,12 +53,6 @@ public class Propagator extends Thread {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
-		try {
-			pr.close();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		disconnect();
 	}
 }

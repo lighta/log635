@@ -40,10 +40,10 @@ public class Schema {
 	 * @throws IOException
 	 */
 	private PipedWriter[][] createPropagators(final int sz, final int n, PipedWriter[][] LayerINpipes) {				
-		PipedWriter[][] dup = new PipedWriter[sz][LayerINpipes[n].length];
-		for(int l=0; l < LayerINpipes[n].length; l++){
+		PipedWriter[][] dup = new PipedWriter[LayerINpipes[n].length][sz];
+		for(int l=0; l < LayerINpipes[n].length; l++){	//chaque input a un propagator si sz >1
 			for(int k=0; k < sz; k++){
-				dup[k][l] = new PipedWriter();
+				dup[l][k] = new PipedWriter();
 			}
 			try {
 				Propagator pg = new Propagator(GUIcounter++,LayerINpipes[n][l],dup[l]);

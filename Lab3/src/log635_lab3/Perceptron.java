@@ -211,9 +211,8 @@ public class Perceptron extends Thread {
 				for(int i=0; i < this.inputPipes.length; i++)
 				{ 
 					running = false;
-					if(closepipe[i] == true){ //skip it
+					if(closepipe[i] == true) //skip it
 						continue;
-					}
 					running = true; //on a tjr au moins un pipe ouvert
 					
 					boolean EOL = false; // End Of Line.

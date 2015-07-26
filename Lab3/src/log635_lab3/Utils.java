@@ -16,7 +16,6 @@ public class Utils {
 			inputPipes[0].close();	
 			inputPipes[1].close();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} //0101
 	}
