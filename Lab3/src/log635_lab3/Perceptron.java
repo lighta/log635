@@ -14,7 +14,7 @@ public class Perceptron extends Thread {
 	private double biasWeight;
 	private PipedWriter outPipe;
 	private double localError;
-	private double percepTotal;
+	private double percepTotal=0;
 	private double activatedPercepTotal;
 	boolean isSigmoid;
 	private final int GUI;		//unique identifier
@@ -86,9 +86,10 @@ public class Perceptron extends Thread {
 	 * @param inputs : list of double from the differents input
 	 * @return perceptron output
 	 */
-	public double calcOutput(double[] inputs)
+	private double calcOutput(double[] inputs)
 	{
 		StringBuilder _sb = null;
+		percepTotal = 0;
 		if(debug ){
 			_sb = new StringBuilder();
 			_sb.append("Perceptron["+GUI+"] entering calc\n");
