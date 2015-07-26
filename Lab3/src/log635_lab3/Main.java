@@ -13,6 +13,7 @@ public class Main {
 	private static int[] perceptronCntByLayer = {2,1};
 	private static int primitiveCnt = 12;
 	private static double derivedNetworkError;
+	private static double allowedError = 0.5; // not in percent value. but in actual value. 
 	private static int validationLineRate = 10; // Valid rate is calculated in a modulo so in short 1/var.
 	
 	public static void main(String[] args) {
@@ -59,61 +60,53 @@ public class Main {
 	}
 	
 	//learn
-	public static boolean learn(final int maxtotaltry, final int maxtry, final Schema sch){
-		derivedNetworkError = 0;
-		boolean success = false;
-		int nbtry=0, nbtotaltry=0;
-		int i=0,j=0;
-		
-		final int nbLayer=sch.getSchema().size();
-		while(nbLayer > i)
+	public static boolean learn(final Schema sch){
+		derivedNetworkError = 100;
+		int nbLayer=sch.getSchema().size();
+		int nbPercept = 0;
+		for(int i = 0;i < perceptronCntByLayer.length; i++ )
 		{
-			final int nbPerceptByLayer=sch.getSchema().get(i).size();
-			while(nbPerceptByLayer > j)
-			{
-				sch.getSchema().get(i).get(j).start(); //starting all perceptron
-				j++;
-			}
-			i++;
+			nbPercept += perceptronCntByLayer[i];
 		}
-		while(i >= 0)
+		while(derivedNetworkError > allowedError)
 		{
-			if(i == nbLayer)
+			if(derivedNetworkError == 100)
 			{
-				sch.getSchema().get(i).get(j).calcLocalError(desiredOutput, sch.getSchema().get(i).get(j).getOutput());
-				derivedNetworkError += sch.getSchema().get(i).get(j).getLocalError();
-				sch.getSchema().get(i).get(j).modifyWeight(learningRate);
+				derivedNetworkError = 0;
 			}
-			else
-			{
-				
-			}
-			
-			while(j >= 0)
-			{
-				
-				j--;
-			}
-			
-			i--;
+			sch.start();
+			recursive(sch.getSchema().size(), sch.getSchema().get(nbLayer).size(), 0, sch, derivedNetworkError);
+			derivedNetworkError /= nbPercept;
+			Math.sqrt(derivedNetworkError);	
 		}
-		
-		
-		/*while(!success && maxtotaltry > nbtotaltry++){
-			while(maxtry > nbtry++)
-			{
-				//foreach readline learndata
-					//push data into pipe input
-					//check result per line (wait schema end)
-					//if not success
-						//update reseau (weight)
-			}
-			//foreach readline testdata`
-				//test
-				//if errorResult < epsilon
-					//report and end
-		}*/
 		return false;
+	}
+	
+	public static void recursive(int layer,  int percept, double permutation, Schema sch, double EQM)
+	{
+		int lastLayer = sch.getSchema().size();
+		derivedNetworkError =+ sch.getSchema().get(layer).get(percept).getLocalError();
+		if(layer == lastLayer)
+		{
+			double temp = sch.getSchema().get(layer).get(percept).modifyWeight(learningRate, 0, true);
+			Schema.addPermutation(temp, layer);
+			recursive(layer-1, sch.getSchema().get(layer-1).size(), 0, sch, derivedNetworkError);
+		}
+		else if(percept == 0)
+		{
+			if(layer == 0)
+			{
+				sch.getSchema().get(layer).get(percept).modifyWeight(learningRate, sch.getPermutation(layer + 1), false);
+			}
+			permutation += sch.getSchema().get(layer).get(percept).modifyWeight(learningRate, sch.getPermutation(layer + 1), false);
+			Schema.addPermutation(permutation, layer);
+			recursive(layer-1, sch.getSchema().get(layer-1).size(), 0, sch, derivedNetworkError);
+		}
+		else
+		{
+			permutation += sch.getSchema().get(layer).get(percept).modifyWeight(learningRate, sch.getPermutation(layer + 1), false);
+			recursive(layer, percept - 1, permutation, sch, derivedNetworkError);
+		}
 	}
 }
 

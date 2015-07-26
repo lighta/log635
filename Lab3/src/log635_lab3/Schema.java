@@ -9,11 +9,24 @@ import java.util.List;
 public class Schema {
 	private int nbLayer = 0;
 	private int nbPerceptron[];
+	private static double permutation[];
 	private List<List<Perceptron>> schema;
 	private boolean started = false;
 	private PipedWriter finalout;
 	int GUIcounter = 0;
 	
+	public static double getPermutation(int layer) {
+		double sum = 0;
+		for(int i = 0; i < layer; i++)
+		{
+			sum += permutation[i];
+		}
+		return permutation[layer];
+	}
+	
+	public static void addPermutation(double value, int layer) {
+		permutation[layer] += value;
+	}
 	
 	public List<List<Perceptron>> getSchema() {
 		return schema;
@@ -26,6 +39,11 @@ public class Schema {
 	public Schema(int nbLayer, int nbPerceptron[], PipedWriter[] inputs,PipedWriter finalout) {
 		super();
 		this.nbLayer = nbLayer; 
+		this.permutation = new double[nbLayer];
+		for(int i = 0; i < nbLayer; i++)
+		{
+			permutation[i] = 0;
+		}
 		this.nbPerceptron = nbPerceptron;
 		this.finalout = finalout;
 		createSchema(inputs);

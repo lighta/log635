@@ -126,16 +126,24 @@ public class Perceptron extends Thread {
 		localError = actualOutput - desiredOutput;
 	}
 	
-	public void modifyWeight(double learningFactor)
+	public double modifyWeight(double learningFactor, double lastLayerDelat, boolean lastLayer)
 	{
-		double delta; 
+		double delta = 0; 
 		int i = 0;
-		delta = learningFactor * (localError * activatedPercepTotal * (1- activatedPercepTotal)) * activatedPercepTotal;
+		if(lastLayer)
+		{
+			delta = learningFactor * (localError * activatedPercepTotal * (1- activatedPercepTotal)) * activatedPercepTotal;
+		}
+		else
+		{
+			delta = learningFactor * (localError * activatedPercepTotal * (1- activatedPercepTotal)) * activatedPercepTotal;
+		}
 		while ( i < inputWeights.length)
 		{
 			inputWeights[i] += delta;
 			i++;
 		}
+		return delta;
 	}
 	
 	/**
