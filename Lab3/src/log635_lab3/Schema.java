@@ -40,10 +40,12 @@ public class Schema {
 	 * @throws IOException
 	 */
 	private PipedWriter[][] createPropagators(final int sz, final int n, PipedWriter[][] LayerINpipes) {				
-		PipedWriter[][] dup = new PipedWriter[LayerINpipes[n].length][sz];
+		PipedWriter[][] dup = new PipedWriter[LayerINpipes[n].length][sz];	//internal
+		PipedWriter[][] indup = new PipedWriter[sz][LayerINpipes[n].length]; //needed for schema
 		for(int l=0; l < LayerINpipes[n].length; l++){	//chaque input a un propagator si sz >1
 			for(int k=0; k < sz; k++){
 				dup[l][k] = new PipedWriter();
+				indup[k][l] = dup[l][k];
 			}
 			try {
 				Propagator pg = new Propagator(GUIcounter++,LayerINpipes[n][l],dup[l]);
@@ -54,7 +56,7 @@ public class Schema {
 				System.err.println("Fail to create Prepagators DEBUG ME");
 			}
 		}
-		return dup;
+		return indup;
 	}
 
 	
@@ -80,16 +82,16 @@ public class Schema {
 				LayerINpipes[i] = LayerOutpipes[i-1];
 			}
 			
-			PipedWriter[][] dup = null;
+			PipedWriter[][] indup = null;
 			if(sz > 1){ //create Multiplexing for pipes
-				dup = createPropagators(sz,i,LayerINpipes); 
+				indup = createPropagators(sz,i,LayerINpipes); 
 			}
 	
 			
 			for(int j=0; j < sz; j++) { //iterate foreach perceptron
 				PipedWriter[] pipesInJ;
 				if(sz > 1)
-					pipesInJ = dup[j];	//separate array for each perceptron
+					pipesInJ = indup[j];	//separate array for each perceptron
 				else
 					pipesInJ = LayerINpipes[i];
 				

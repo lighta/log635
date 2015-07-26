@@ -43,7 +43,7 @@ public class Propagator extends Thread {
 				c = pr.read();
 				if(c==-1)
 					break;
-				System.out.println("Propagating["+GUI+"] c="+c+" ch"+((char)c) );
+				//System.out.println("Propagating["+GUI+"] c="+c+" ch"+((char)c) );
 				for(int i=0; i<dup.length; i++){
 					dup[i].write(c);
 					dup[i].flush();
