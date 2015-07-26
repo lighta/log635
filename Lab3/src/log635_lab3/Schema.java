@@ -205,8 +205,13 @@ public class Schema {
 		System.out.println("Schema main, quicktest");
 		int nbPerceptron1[] = {1};
 		test_sch1(1, 1, nbPerceptron1);
+		
 		System.out.println("\n\n");
 		int nbPerceptron2[] = {2,1};
 		test_sch1(2,2, nbPerceptron2 );
+		
+		System.out.println("\n\n");
+		int nbPerceptron3[] = {4,2,1};
+		test_sch1(3,3, nbPerceptron3 );
 	}
 }
