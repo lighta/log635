@@ -13,6 +13,9 @@ public class Perceptron extends Thread {
 	private double bias;
 	private double biasWeight;
 	private PipedWriter outPipe;
+	private double localError;
+	private double percepTotal;
+	private double activatedPercepTotal;
 	boolean isSigmoid;
 	private final int GUI;		//unique identifier
 
@@ -67,6 +70,16 @@ public class Perceptron extends Thread {
 		connect(inPipes,outpipe);
  	}
 	
+	public double getLocalError()
+	{
+		return localError;
+	}
+	
+	public double getOutput()
+	{
+		return activatedPercepTotal;
+	}
+	
 	/**
 	 * Function to calculate the output of this perceptron 
 	 * wheter is in Sigmoid mode or Seuil
@@ -80,31 +93,47 @@ public class Perceptron extends Thread {
 			_sb = new StringBuilder();
 			_sb.append("Perceptron["+GUI+"] entering calc\n");
 		}
-		double sum = 0, out=0;
 		// Calc the perceptron value.
 		for(int i=0; i < inputs.length; i++)
 		{
-			sum += inputs[i] * inputWeights[i];
+			percepTotal += inputs[i] * inputWeights[i];
 			if(debug)
 				_sb.append("\t in["+i+"]="+inputs[i]+" w="+inputWeights[i]+" inw="+(inputs[i]*inputWeights[i]+"\n") );
 		}
-		sum += bias * biasWeight;
+		percepTotal += bias * biasWeight;
 		if(debug)
-			_sb.append("\t bias="+(bias * biasWeight)+" sum="+sum+" mode="+((isSigmoid)?"sigmoid":"seuil")+"\n");
+			_sb.append("\t bias="+(bias * biasWeight)+" sum="+percepTotal+" mode="+((isSigmoid)?"sigmoid":"seuil")+"\n");
 					
 		if(isSigmoid){
 			// Activation function in this case sigmoid.
-			out = ( 1/ (1 +  Math.exp( -sum ) ) );
+			activatedPercepTotal = ( 1/ (1 +  Math.exp( -percepTotal ) ) ) * percepTotal;
 		}
 		else {
-			out = (sum >= 0)?1:0; //1 or 0
+			activatedPercepTotal = (percepTotal >= 0)?1:0; //1 or 0
 		}
 		
 		if(debug){
-			_sb.append("\t calc done => out="+out);
+			_sb.append("\t calc done => out="+activatedPercepTotal);
 			System.out.println(_sb);
 		}
-		return out;
+		return activatedPercepTotal;
+	}
+	
+	
+	public void calcLocalError(double desiredOutput, double actualOutput)
+	{
+		localError = actualOutput - desiredOutput;
+	}
+	
+	public void modifyWeight(double learningFactor, double derivedNetworkError)
+	{
+		biasWeight += -1 * learningFactor * derivedNetworkError;
+		int i = 0;
+		while ( i < inputWeights.length)
+		{
+			inputWeights[i] += -1 * learningFactor * derivedNetworkError;
+			i++;
+		}
 	}
 	
 	/**
@@ -211,8 +240,9 @@ public class Perceptron extends Thread {
 				for(int i=0; i < this.inputPipes.length; i++)
 				{ 
 					running = false;
-					if(closepipe[i] == true) //skip it
+					if(closepipe[i] == true){ //skip it
 						continue;
+					}
 					running = true; //on a tjr au moins un pipe ouvert
 					
 					boolean EOL = false; // End Of Line.
