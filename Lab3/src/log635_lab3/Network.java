@@ -3,14 +3,15 @@ package log635_lab3;
 import java.io.IOException;
 import java.io.PipedReader;
 import java.io.PipedWriter;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Vector;
 
 public class Network {
 	public static int DEF_VALIDATION_RATE = 10; // Valid rate is calculated in a modulo so in short 1/var.
 	public static double DEF_ALLOWED_ER = 5; 	// not in percent value. but in actual value. 
 	public static int DEF_PRIMITIVE_CNT = 11;	// 11 + 1(quality)
-	public static int[] DEF_PERCNT_BY_LAYER = {11,6,3,1};
-	public static int DEF_NB_LAYER = 4;
+	public static int[] DEF_PERCNT_BY_LAYER = {11,3,1};
 	public static double DEF_LEARNING_RATE = 0.1;
 	
 	private double learningRate;
@@ -28,21 +29,22 @@ public class Network {
 	
 	public Network() {
 		this.learningRate = DEF_LEARNING_RATE;
-		this.nbLayer = DEF_NB_LAYER;
 		this.perceptronCntByLayer = DEF_PERCNT_BY_LAYER;
 		this.primitiveCnt = DEF_PRIMITIVE_CNT;
 		this.allowedError = DEF_ALLOWED_ER;
 		this.validationLineRate = DEF_VALIDATION_RATE;
+		
+		this.nbLayer = perceptronCntByLayer.length;
 		createNetwork();
 	}
 	
-	public Network(double learningRate, int nbLayer,
+	public Network(double learningRate,
 			int[] perceptronCntByLayer, int primitiveCnt
 			, double allowedError) {
 		super();
 		this.learningRate = learningRate;
-		this.nbLayer = nbLayer;
 		this.perceptronCntByLayer = perceptronCntByLayer;
+		this.nbLayer = perceptronCntByLayer.length;
 		this.primitiveCnt = primitiveCnt;		
 		this.allowedError = allowedError;
 		createNetwork();
@@ -80,7 +82,7 @@ public class Network {
 			inpipe[i] = new PipedWriter();
 		finalout = new PipedWriter();
 		
-		sch = new Schema(nbLayer, perceptronCntByLayer, inpipe, finalout);
+		sch = new Schema(perceptronCntByLayer, inpipe, finalout);
 		
 		infinal = new PipedReader();
 		try {
@@ -111,6 +113,16 @@ public class Network {
 		}
 	}
 	
+	public double calc_EQM(List<Double> le){
+		double EQM = 0;
+		for(double cur_le : le){
+			EQM = cur_le*cur_le;
+		}
+		EQM /= le.size();
+		EQM = Math.sqrt(EQM);
+		return EQM;
+	}
+	
 	/**
 	 * Function to start learning the data.
 	 * @param lb3fr : data to learn
@@ -118,14 +130,13 @@ public class Network {
 	 * @return : wheter Epsilon was respected
 	 */
 	public boolean learn(final Lab3FileReader lb3fr, final int maxTry){
-		
 		derivedNetworkError = 100;
 		int nbLayer=sch.getSchema().size();
 		int nbPercept = sch.getTotalPercept();
 		int nbtry = 0;								//to avoid infinite loop
 		sch.start();
 		
-		while(derivedNetworkError > allowedError && maxTry>nbtry)
+		while(derivedNetworkError > allowedError && maxTry>nbtry) //EQM > Epsilon
 		{
 			//for all data to learn
 			for(int i=0; i<lb3fr.GetLearningSetSize(); i++){
@@ -142,8 +153,31 @@ public class Network {
 
 				System.out.println("res="+res+" expected="+expected+" derivedNetworkError="+derivedNetworkError);
 			}
-			nbtry++;
 			derivedNetworkError %= 100; //back in percent
+
+			
+			nbtry++;
+			
+			if((nbtry % validationLineRate)==0){ //chaque x validationaRate on effectue un test de validation
+				//for all validation
+				List<Double> expecteds = new ArrayList<>();
+				for(int i=0; i<lb3fr.GetLearningSetSize(); i++){
+					final Vector<Double> testdata = lb3fr.GetLearningSetDataRows(i);
+					pushData(testdata,false);
+					expecteds.add(testdata.lastElement());
+				}
+				List<Double> res = Utils.readSortie(infinal);
+				
+				List<Double> le = new ArrayList<>();
+				int i=0;
+				for(double cur_ex : expecteds){
+					double erl = Math.abs(res.get(i) - cur_ex);
+					le.add(erl);
+				}
+				double EQM_test = calc_EQM(le);
+				System.out.println("EQM_test="+EQM_test);
+			}
+			
 			System.out.println("derivedNetworkError="+derivedNetworkError+" allowedError="+allowedError+" nbtry="+nbtry );
 		}
 		return (derivedNetworkError > allowedError);

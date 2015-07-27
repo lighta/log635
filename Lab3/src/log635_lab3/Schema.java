@@ -40,14 +40,13 @@ public class Schema {
 
 	/**
 	 * Constructor
-	 * @param nbLayer : number of layer
 	 * @param nbPerceptron : number of perceptron by layer (tab)
 	 * @param inputs : pipes of entries for schema (x1..xn)
 	 * @param finalout : off pipe of schema 
 	 */
-	public Schema(int nbLayer, int nbPerceptron[], PipedWriter[] inputs,PipedWriter finalout) {
+	public Schema(int nbPerceptron[], PipedWriter[] inputs,PipedWriter finalout) {
 		super();
-		this.nbLayer = nbLayer; 
+		this.nbLayer = nbPerceptron.length; 
 		this.permutation = new double[nbLayer];
 		for(int i = 0; i < nbLayer; i++)
 		{
@@ -243,7 +242,7 @@ public class Schema {
 	 * @param nbcouche : number of layer
 	 * @param nbPerceptron : number of perceptron by layer
 	 */
-	private static void test_sch1(final int id, final int nbcouche,final int nbPerceptron[]){
+	private static void test_sch1(final int id, final int nbPerceptron[]){
 		System.out.println("Testing schema "+id);
 		
 		PipedWriter[] inputPipes = new PipedWriter[2]; //x1 et x2
@@ -253,7 +252,7 @@ public class Schema {
 		PipedWriter finalout = new PipedWriter();
 		PipedReader readfinal = new PipedReader();
 		
-		Schema sch = new Schema(nbcouche,nbPerceptron,inputPipes,finalout);
+		Schema sch = new Schema(nbPerceptron,inputPipes,finalout);
 		sch.displaySchema();
 		sch.start();
 		
@@ -276,14 +275,14 @@ public class Schema {
 	public static void main(String[] args) {
 		System.out.println("Schema main, quicktest");
 		int nbPerceptron1[] = {1};
-		test_sch1(1, 1, nbPerceptron1);
+		test_sch1(1, nbPerceptron1);
 		
 		System.out.println("\n\n");
 		int nbPerceptron2[] = {2,1};
-		test_sch1(2,2, nbPerceptron2 );
+		test_sch1(2, nbPerceptron2 );
 		
 		System.out.println("\n\n");
 		int nbPerceptron3[] = {4,2,1};
-		test_sch1(3,3, nbPerceptron3 );
+		test_sch1(3, nbPerceptron3 );
 	}
 }
