@@ -8,6 +8,7 @@ public class Propagator extends Thread {
 	private PipedWriter[] dup;
 	private PipedReader pr;
 	private final int GUI;
+	private boolean running;
 
 	/**
 	 * Constructor
@@ -32,13 +33,28 @@ public class Propagator extends Thread {
 	 */
 	private void disconnect(){
 		try {
-			pr.close();
-			for(int i=0; i<dup.length; i++)
-				dup[i].close();
+			if(pr != null)
+				pr.close();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			//e.printStackTrace();
 		}
+		try {
+			for(int i=0; i<dup.length; i++){
+				if(dup[i] != null)
+					dup[i].close();
+			}	
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			//e.printStackTrace();
+		}
+	}
+	
+	@Override
+	public void interrupt() {
+		super.interrupt();
+		running = false;
+		disconnect(); //hard disconection
 	}
 	
 	/**
@@ -52,7 +68,8 @@ public class Propagator extends Thread {
 		
 		System.out.println("Propagator["+this.GUI+"] started");
 		try {
-			while(true){ //till close pipe
+			running = true;
+			while(running == true){ //till close pipe
 				//System.out.println("Propagator["+this.GUI+"] waiting");
 				c = pr.read();
 				if(c==-1)

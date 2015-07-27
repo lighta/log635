@@ -140,7 +140,7 @@ public class Network {
 		{
 			//for all data to learn
 			for(int i=0; i<lb3fr.GetLearningSetSize(); i++){
-				final Vector<Double> data = lb3fr.GetLearningSetDataRows(i);
+				final Vector<Double> data = lb3fr.GetNormLearningSetDataRows(i);
 				//System.out.println("data="+data);
 				pushData(data,false);
 				final double res = Utils.readOneSortie(infinal); //waiting schema as finish to compute with that value
@@ -180,36 +180,36 @@ public class Network {
 			
 			System.out.println("derivedNetworkError="+derivedNetworkError+" allowedError="+allowedError+" nbtry="+nbtry );
 		}
-		return (derivedNetworkError > allowedError);
+		sch.stop();
+		return (derivedNetworkError < allowedError);
 	}
 	
 	// fonction gradient (eq 18)
 	private void retroPropagation(final int layer,final int percept, double permutation,final double expected)
-	{
-		final int nbLayer = sch.getSchema().size();
-		
+	{	
+		final List<List<Perceptron>> tmp_sch = sch.getSchema(); //avoid multiple dereference
 		//maj EQM (si on passe 2fous dans le meme percept fuck)
-		final double e = sch.getSchema().get(layer).get(percept).getLocalError(expected);
+		final double e = tmp_sch.get(layer).get(percept).getLocalError(expected);
 		if(e!=0) //avoid flush
 			derivedNetworkError = e*e;
 		
 		if(layer == nbLayer-1){
-			double temp = sch.getSchema().get(layer).get(percept).modifyWeight(learningRate, 0, true);
+			double temp = tmp_sch.get(layer).get(percept).modifyWeight(learningRate, 0, true);
 			sch.addPermutation(layer, temp);  
-			retroPropagation(layer-1, sch.getSchema().get(layer-1).size()-1, 0, 0); //descent couche inf
+			retroPropagation(layer-1, tmp_sch.get(layer-1).size()-1, 0, 0); //descent couche inf
 		}
 		else if(percept == 0){ //dernier perceptron du layer
 			if(layer == 0){ //derniere couche
-				sch.getSchema().get(layer).get(percept).modifyWeight(learningRate, sch.getPermutation(layer + 1), false);
+				tmp_sch.get(layer).get(percept).modifyWeight(learningRate, sch.getPermutation(layer + 1), false);
 			}
 			else {
-				permutation += sch.getSchema().get(layer).get(percept).modifyWeight(learningRate, sch.getPermutation(layer + 1), false);
+				permutation += tmp_sch.get(layer).get(percept).modifyWeight(learningRate, sch.getPermutation(layer + 1), false);
 				sch.addPermutation(layer, permutation);
-				retroPropagation(layer-1, sch.getSchema().get(layer-1).size()-1, 0, 0); //descent couche inf
+				retroPropagation(layer-1, tmp_sch.get(layer-1).size()-1, 0, 0); //descent couche inf
 			}
 		}
 		else { //on itere dans le layer
-			permutation += sch.getSchema().get(layer).get(percept).modifyWeight(learningRate, sch.getPermutation(layer + 1), false);
+			permutation += tmp_sch.get(layer).get(percept).modifyWeight(learningRate, sch.getPermutation(layer + 1), false);
 			retroPropagation(layer, percept - 1, permutation, 0); //descent next percepts
 		}
 	}

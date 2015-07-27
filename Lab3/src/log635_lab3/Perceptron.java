@@ -199,14 +199,14 @@ public class Perceptron extends Thread {
 		{
 			for(int i=0; i < this.inputPipes.length; i++)
 			{ 
-				inputPipes[i].close();
+				if(inputPipes[i] != null)
+					inputPipes[i].close();
 				//System.out.println("Perceptron["+GUI+"]["+i+"]:: inputs pipes closed.");
 			}
 			//System.out.println("Perceptron["+GUI+"]:: inputs pipes closed.");
-			
-			outPipe.close();
-			//System.out.println("Perceptron["+GUI+"]:: output pipe closed.");
-			
+			if(outPipe != null)
+				outPipe.close();
+			//System.out.println("Perceptron["+GUI+"]:: output pipe closed.");	
 		} 
 		catch (Exception Error) 
 		{
@@ -216,21 +216,11 @@ public class Perceptron extends Thread {
 	}
 	
 	/**
-	 * Function to stop gracefully a perceptron
+	 * Function to stop a perceptron
 	 */
 	@Override
 	public void interrupt() {
 		super.interrupt();
-		running = false; //gracefully shutdown
-	}
-	
-	/**
-	 * Function to stop a perceptron without care
-	 */
-	@SuppressWarnings("deprecation")
-	@Override
-	public void destroy() {
-		super.destroy();
 		running = false;
 		disconnect(); //hard disconection
 	}

@@ -11,6 +11,7 @@ public class Schema {
 	private int nbPerceptron[];
 	private double permutation[];
 	private List<List<Perceptron>> schema;
+	private List<Propagator> proglist;
 	private boolean started = false;
 	private PipedWriter finalout;
 	private int GUIcounter = 0;
@@ -75,6 +76,7 @@ public class Schema {
 			}
 			try {
 				Propagator pg = new Propagator(GUIcounter++,LayerINpipes[n][l],dup[l]);
+				proglist.add(pg);
 				pg.start();
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
@@ -161,6 +163,9 @@ public class Schema {
 	 * Asking all perceptron to stop themself
 	 */
 	public void stop(){
+		for(Propagator cur_prog : proglist)
+			cur_prog.interrupt();
+		
 		if(started == true){
 			started = false;
 			int i=0;
