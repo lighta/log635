@@ -49,6 +49,7 @@ public class Schema {
 		super();
 		this.nbLayer = nbPerceptron.length; 
 		this.permutation = new double[nbLayer];
+		proglist = new ArrayList<Propagator>();
 		for(int i = 0; i < nbLayer; i++)
 		{
 			permutation[i] = 0;
@@ -271,6 +272,8 @@ public class Schema {
 		List<Double> sch_out = Utils.readSortie(readfinal);
 		System.out.println("Sortie sch1="+sch_out);
 		sch.waitFinished(); //ensure all is done before quitting test
+		
+		FileWriter.write(sch);
 	}
 	
 	/**
