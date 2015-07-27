@@ -20,41 +20,46 @@ public class Utils {
 		} //0101
 	}
 	
-	public static List<Double> readSortie(PipedReader entree){
+	public static Double readOneSortie(PipedReader entree){
 		if(entree==null) //useless but whatever
 			return null;
-		
-		List<Double> valsortie = new ArrayList<>();
-		try {
-			boolean done=false;
-			
-			while(done==false){
-				double val=0;
-				boolean EOL = false;
-				StringBuilder lineOfText = new StringBuilder();
-				
-				while(EOL == false){
-					int value; // The value read from the pipe.
-					value = entree.read();
-					
-					char ch = (char) value;
-					if (value == -1) { // Pipe is closed.
-						done=true;
-						break;
-					} else {
-						lineOfText.append(ch);
-					}
-					if (value == '\n') {  // End of line	
-						val = Double.parseDouble( lineOfText.toString() );
-						EOL = true;
-						//System.out.println("val="+val);
-						valsortie.add(val);
-					}
+
+		double val=-1;
+		boolean EOL = false;
+		StringBuilder lineOfText = new StringBuilder();
+		try {	
+			while(EOL == false){
+				int value; // The value read from the pipe.
+				value = entree.read();
+				char ch = (char) value;
+				if (value == -1) { // Pipe is closed.
+					break;
+				} else {
+					lineOfText.append(ch);
+				}
+				if (value == '\n') {  // End of line	
+					val = Double.parseDouble( lineOfText.toString() );
+					EOL = true;
+					//System.out.println("val="+val);
 				}
 			}
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		}
+		return val;
+	}
+	
+	public static List<Double> readSortie(PipedReader entree){
+		if(entree==null) //useless but whatever
+			return null;
+		
+		List<Double> valsortie = new ArrayList<>();
+		while(true){
+			double val=readOneSortie(entree);
+			if (val == -1) // Pipe is closed.
+				break;
+			valsortie.add(val);
 		}
 		
 		try {

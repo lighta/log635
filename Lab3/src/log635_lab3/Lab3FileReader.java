@@ -6,13 +6,12 @@ import java.io.*;
 public class Lab3FileReader {
 
 	private Vector<String> vHeaders;
-	Vector<Vector<Double>> vLearningSet;
-	Vector<Vector<Double>> vValidationSet;
-	Vector<Vector<Double>> vNormLearningSet;
-	Vector<Vector<Double>> vNormValidationSet;
+	private Vector<Vector<Double>> vLearningSet;
+	private Vector<Vector<Double>> vValidationSet;
+	private Vector<Vector<Double>> vNormLearningSet;
+	private Vector<Vector<Double>> vNormValidationSet;
 	
-	public Lab3FileReader(String strFilePath, int primitiveCnt, int learningLineVSValidLine) {
-		
+	public Lab3FileReader(String strFilePath, int learningLineVSValidLine) {	
 		vHeaders = new Vector<String>();
 		vLearningSet = new Vector<Vector<Double>>();
 		vValidationSet = new Vector<Vector<Double>>();
@@ -32,6 +31,7 @@ public class Lab3FileReader {
 		    		vHeaders.add(splitString[i]);
 		    	}
 		    }
+		    br.close();
 		    
 		    // Second pass for the data.
 		    br = new BufferedReader(new FileReader(strFilePath));
@@ -96,4 +96,37 @@ public class Lab3FileReader {
 		return vValidationSet.size();
 	}
 	
+	
+	public void printAll(){
+		this.printHeader();
+		System.out.println("#######################################");
+		this.printLearningSet();
+		System.out.println("#######################################");
+		this.printValidationSet();
+		System.out.println("#######################################");
+	}
+	
+	public void printHeader(){
+		// Print headers.
+		for (int i = 0; i < this.GetHeaders().size(); i++)
+		{
+			System.out.println(this.GetHeaders().elementAt(i));
+		}
+	}
+	
+	public void printLearningSet(){
+		// Print the entire learning set.
+		for (int i = 0; i < this.GetLearningSetSize(); i++)
+		{
+			System.out.println(this.GetNormLearningSetDataRows(i));
+		}
+	}
+
+	public void printValidationSet(){
+		// Print the entire validation set.
+		for (int i = 0; i < this.GetValidationSetSize(); i++)
+		{
+			System.out.println(this.GetNormValidationSetDataRows(i));
+		}
+	}
 }

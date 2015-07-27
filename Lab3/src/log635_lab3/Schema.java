@@ -9,13 +9,13 @@ import java.util.List;
 public class Schema {
 	private int nbLayer = 0;
 	private int nbPerceptron[];
-	private static double permutation[];
+	private double permutation[];
 	private List<List<Perceptron>> schema;
 	private boolean started = false;
 	private PipedWriter finalout;
 	int GUIcounter = 0;
 	
-	public static double getPermutation(int layer) {
+	public double getPermutation(int layer) {
 		double sum = 0;
 		for(int i = 0; i < layer; i++)
 		{
@@ -24,7 +24,7 @@ public class Schema {
 		return permutation[layer];
 	}
 	
-	public static void addPermutation(double value, int layer) {
+	public void addPermutation(double value, int layer) {
 		permutation[layer] += value;
 	}
 	

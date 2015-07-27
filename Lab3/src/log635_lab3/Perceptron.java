@@ -6,7 +6,7 @@ import java.lang.Math;
 import java.util.List;
 
 public class Perceptron extends Thread {
-	boolean running;
+	private boolean running;
 	
 	private PipedReader[] inputPipes;
 	private double[] inputWeights;
@@ -14,12 +14,11 @@ public class Perceptron extends Thread {
 	private double biasWeight;
 	private PipedWriter outPipe;
 	private double localError;
-	private double percepTotal=0;
 	private double activatedPercepTotal;
-	boolean isSigmoid;
+	private boolean isSigmoid;
 	private final int GUI;		//unique identifier
 
-	private boolean debug = true;
+	private boolean debug = false;
 	
 	/**
 	 * Main Constructeur
@@ -89,7 +88,7 @@ public class Perceptron extends Thread {
 	private double calcOutput(double[] inputs)
 	{
 		StringBuilder _sb = null;
-		percepTotal = 0;
+		double percepTotal = 0;
 		if(debug ){
 			_sb = new StringBuilder();
 			_sb.append("Perceptron["+GUI+"] entering calc\n");
@@ -121,8 +120,7 @@ public class Perceptron extends Thread {
 	}
 	
 	
-	public void calcLocalError(double desiredOutput, double actualOutput)
-	{
+	public void calcLocalError(double desiredOutput, double actualOutput){
 		localError = actualOutput - desiredOutput;
 	}
 	
@@ -275,7 +273,7 @@ public class Perceptron extends Thread {
 						if (value == '\n') {  // End of line	
 							inputsValue[i] = Double.parseDouble( lineOfText.toString() );
 							EOL = true;
-							System.out.println("Perceptron["+GUI+"]["+i+"] received="+inputsValue[i]);
+							//System.out.println("Perceptron["+GUI+"]["+i+"] received="+inputsValue[i]);
 						}
 					}
 				}
