@@ -15,16 +15,21 @@ public class Schema {
 	private PipedWriter finalout;
 	private int GUIcounter = 0;
 	
+	/**
+	 * Somme des truc retain (pour calcul des weught par retropropagation)
+	 * (Crazy Yummi)
+	 * @param layer : couche initial
+	 * @return sum de couche initial to end
+	 */
 	public double getPermutation(int layer) {
 		double sum = 0;
-		for(int i = 0; i < layer; i++)
-		{
+		for(int i = 0; i < layer; i++){ //iterate sur les couche superieur
 			sum += permutation[i];
 		}
-		return permutation[layer];
+		return sum;
 	}
 	
-	public void addPermutation(double value, int layer) {
+	public void addPermutation(int layer, double value) {
 		permutation[layer] += value;
 	}
 	
@@ -199,6 +204,38 @@ public class Schema {
 	}
 
 	/**
+	 * Function to know how many percept we have in our schema
+	 * @return
+	 */
+	public int getTotalPercept(){
+		int nbPercept=0;
+		for(int i = 0;i < nbPerceptron.length; i++ ){
+			nbPercept += nbPerceptron[i];
+		}
+		return nbPercept;
+	}
+	
+	/**
+	 * Fonciton to display the whole schema configuration
+	 */
+	public void displaySchema(){
+		int i=0;
+		StringBuilder _sb = new StringBuilder("Schema configuration: nbLayer="+nbLayer+"\n");
+		while(nbLayer > i){
+			final int nbpercepcouche=nbPerceptron[i];
+			int j=0;
+			_sb.append("Layer"+i+" nbpercept="+nbpercepcouche+"\n");
+			while(nbpercepcouche > j){
+				Perceptron p = schema.get(i).get(j);
+				_sb.append("\t perceptron="+j+" p="+p+"\n");
+				j++;
+			}
+			i++;
+		}
+		System.out.println(_sb.toString());
+	}
+	
+	/**
 	 * Function to try out our schema
 	 * Build a schema with given parameter
 	 * Push data into schema to see how they propagate
@@ -208,6 +245,7 @@ public class Schema {
 	 */
 	private static void test_sch1(final int id, final int nbcouche,final int nbPerceptron[]){
 		System.out.println("Testing schema "+id);
+		
 		PipedWriter[] inputPipes = new PipedWriter[2]; //x1 et x2
 		inputPipes[0] = new PipedWriter();
 		inputPipes[1] = new PipedWriter();
@@ -216,6 +254,7 @@ public class Schema {
 		PipedReader readfinal = new PipedReader();
 		
 		Schema sch = new Schema(nbcouche,nbPerceptron,inputPipes,finalout);
+		sch.displaySchema();
 		sch.start();
 		
 		try {

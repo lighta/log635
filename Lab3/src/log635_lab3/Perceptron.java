@@ -13,7 +13,7 @@ public class Perceptron extends Thread {
 	private double bias;
 	private double biasWeight;
 	private PipedWriter outPipe;
-	private double localError;
+	private double localError = 0;
 	private double activatedPercepTotal;
 	private boolean isSigmoid;
 	private final int GUI;		//unique identifier
@@ -116,18 +116,20 @@ public class Perceptron extends Thread {
 	
 	
 	
-	public double getLocalError()
+	public double getLocalError(double desiredOutput)
 	{
+		if(localError != 0)
+			return localError;
+		calcLocalError(desiredOutput);
 		return localError;
 	}
 	
-	public double getOutput()
-	{
+	public double getOutput(){
 		return activatedPercepTotal;
 	}
 	
-	public void calcLocalError(double desiredOutput, double actualOutput){
-		localError = actualOutput - desiredOutput;
+	public void calcLocalError(double desiredOutput){
+		localError = activatedPercepTotal - desiredOutput;
 	}
 	
 	public double modifyWeight(double learningFactor, double lastLayerDelat, boolean lastLayer)
@@ -140,10 +142,10 @@ public class Perceptron extends Thread {
 		}
 		else
 		{
-			delta = learningFactor * (localError * activatedPercepTotal * (1- activatedPercepTotal)) * activatedPercepTotal;
+			delta = ((learningFactor *activatedPercepTotal) * (activatedPercepTotal *  (1- activatedPercepTotal))  * lastLayerDelat);
 		}
-		while ( i < inputWeights.length)
-		{
+		//on update tous nos poid
+		while ( i < inputWeights.length){
 			inputWeights[i] += delta;
 			i++;
 		}
@@ -302,6 +304,18 @@ public class Perceptron extends Thread {
 		} 
 		disconnect();
 	}
+	
+	
+	@Override
+	public String toString() {
+		String perstr = "Perceptron GUI="+GUI+" nbinput="+inputPipes.length+"\n";
+		perstr += "\t bias="+bias+" bw="+biasWeight+"\n";
+		for(int i=0; i<inputPipes.length; i++){
+			perstr += "\t w"+i+"="+inputWeights[i]+"\n";
+		}
+		return perstr;
+	}
+	
 	
 	/**
 	 * Small main to try out perceptron is behaving well
