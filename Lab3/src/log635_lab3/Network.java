@@ -21,10 +21,10 @@ public class Network {
 	public int validationLineRate; 
 	
 	private double derivedNetworkError;
-	Schema sch;
-	PipedWriter[] inpipe; //inpipe of all schema
-	PipedWriter finalout; //outpipe of all the schema
-	PipedReader infinal; //outpipe of all the schema
+	private Schema sch;
+	private PipedWriter[] inpipe; //inpipe of all schema
+	private PipedWriter finalout; //outpipe of all the schema
+	private PipedReader infinal; //outpipe of all the schema
 	
 	public Network() {
 		this.learningRate = DEF_LEARNING_RATE;
@@ -54,7 +54,7 @@ public class Network {
 		return learningRate;
 	}
 
-	public void setLearningRate(double learningRate) {
+	public void setLearningRate(final double learningRate) {
 		this.learningRate = learningRate;
 	}
 
@@ -62,7 +62,7 @@ public class Network {
 		return validationLineRate;
 	}
 
-	public void setValidationLineRate(int validationLineRate) {
+	public void setValidationLineRate(final int validationLineRate) {
 		this.validationLineRate = validationLineRate;
 	}
 	
@@ -95,7 +95,7 @@ public class Network {
 	 * Function to push some data into schema
 	 * @param data : data to push into
 	 */
-	private void pushData(Vector<Double> data){
+	private void pushData(final Vector<Double> data){
 		for(int k=0; k<data.size(); k++){
 			try {
 				inpipe[k].write(data.get(k)+"\n");
@@ -108,7 +108,7 @@ public class Network {
 	}
 	
 	//learn
-	public boolean learn(Lab3FileReader lb3fr){
+	public boolean learn(final Lab3FileReader lb3fr){
 		
 		
 		derivedNetworkError = 100;
@@ -126,9 +126,9 @@ public class Network {
 			}
 			//for all data to learn
 			for(int i=0; i<lb3fr.GetLearningSetSize(); i++){
-				Vector<Double> data = lb3fr.GetLearningSetDataRows(i);
+				final Vector<Double> data = lb3fr.GetLearningSetDataRows(i);
 				pushData(data);
-				double res = Utils.readOneSortie(infinal);
+				final double res = Utils.readOneSortie(infinal);
 				//
 				
 				recursive(sch.getSchema().size(), sch.getSchema().get(nbLayer).size(), 0, derivedNetworkError);

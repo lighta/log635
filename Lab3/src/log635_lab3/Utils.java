@@ -7,6 +7,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Utils {
+	/**
+	 * Small function to push Data into given pipe
+	 * NB actually only push for the 2, first pipe atm
+	 * Used for tests
+	 * @param inputPipes : pipes to push into
+	 */
 	public static void test_shoutData(PipedWriter[] inputPipes){
 		//simulate shout data
 		try {
@@ -20,6 +26,12 @@ public class Utils {
 		} //0101
 	}
 	
+	/**
+	 * Fonction blocante de lecture d'un pipe
+	 * Attend qu'un pipe est recu UN data avant de sortir
+	 * @param entree : Pipe a lire
+	 * @return
+	 */
 	public static Double readOneSortie(PipedReader entree){
 		if(entree==null) //useless but whatever
 			return null;
@@ -50,6 +62,13 @@ public class Utils {
 		return val;
 	}
 	
+	/**
+	 * Fonction blocante de lecture d'un pipe
+	 * Attend qu'un pipe est recu TOUS le data avant de sortir
+	 * (on a recu tous le data quand le pipe d'entree est ferme)
+	 * @param entree : Pipe a lire
+	 * @return
+	 */
 	public static List<Double> readSortie(PipedReader entree){
 		if(entree==null) //useless but whatever
 			return null;

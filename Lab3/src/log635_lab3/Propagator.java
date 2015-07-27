@@ -9,8 +9,14 @@ public class Propagator extends Thread {
 	private PipedReader pr;
 	private final int GUI;
 
-	
-	public Propagator(final int GUI,PipedWriter pw,PipedWriter[] dup) throws IOException {
+	/**
+	 * Constructor
+	 * @param GUI : Unique identifier
+	 * @param pw : input pipe
+	 * @param dup : pipes to duplicate into
+	 * @throws IOException
+	 */
+	public Propagator(final int GUI,final PipedWriter pw,final PipedWriter[] dup) throws IOException {
 		super();
 		
 		System.out.println("Propagator["+GUI+"] init");
@@ -20,6 +26,10 @@ public class Propagator extends Thread {
 		pr.connect(pw);
 	}
 	
+	/**
+	 * Disconnect our pipe
+	 * (ensure they all close properly)
+	 */
 	private void disconnect(){
 		try {
 			pr.close();
@@ -31,6 +41,10 @@ public class Propagator extends Thread {
 		}
 	}
 	
+	/**
+	 * Handler, get data then push them into duplicate pipe
+	 * @TODO use parallel loop instead
+	 */
 	@Override
 	public void run() {
 		super.run();

@@ -13,7 +13,7 @@ public class Schema {
 	private List<List<Perceptron>> schema;
 	private boolean started = false;
 	private PipedWriter finalout;
-	int GUIcounter = 0;
+	private int GUIcounter = 0;
 	
 	public double getPermutation(int layer) {
 		double sum = 0;
@@ -32,10 +32,14 @@ public class Schema {
 		return schema;
 	}
 
-	public void setSchema(List<List<Perceptron>> schema) {
-		this.schema = schema;
-	}
 
+	/**
+	 * Constructor
+	 * @param nbLayer : number of layer
+	 * @param nbPerceptron : number of perceptron by layer (tab)
+	 * @param inputs : pipes of entries for schema (x1..xn)
+	 * @param finalout : off pipe of schema 
+	 */
 	public Schema(int nbLayer, int nbPerceptron[], PipedWriter[] inputs,PipedWriter finalout) {
 		super();
 		this.nbLayer = nbLayer; 
@@ -194,7 +198,14 @@ public class Schema {
 		}
 	}
 
-	
+	/**
+	 * Function to try out our schema
+	 * Build a schema with given parameter
+	 * Push data into schema to see how they propagate
+	 * @param id : test id
+	 * @param nbcouche : number of layer
+	 * @param nbPerceptron : number of perceptron by layer
+	 */
 	private static void test_sch1(final int id, final int nbcouche,final int nbPerceptron[]){
 		System.out.println("Testing schema "+id);
 		PipedWriter[] inputPipes = new PipedWriter[2]; //x1 et x2
@@ -219,6 +230,10 @@ public class Schema {
 		sch.waitFinished(); //ensure all is done before quitting test
 	}
 	
+	/**
+	 * Small main to try out our schema
+	 * @param args
+	 */
 	public static void main(String[] args) {
 		System.out.println("Schema main, quicktest");
 		int nbPerceptron1[] = {1};

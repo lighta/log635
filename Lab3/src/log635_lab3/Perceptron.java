@@ -28,7 +28,7 @@ public class Perceptron extends Thread {
 	 * @param outPipe : sortie
 	 * @throws Exception : si erreur a la creation (connect)
 	 */
-	public Perceptron(final int GUI, PipedWriter[] inPipes, PipedWriter outPipe) throws Exception
+	public Perceptron(final int GUI,final PipedWriter[] inPipes,final PipedWriter outPipe) throws Exception
 	{
 		this.GUI=GUI;
 		this.bias = 1;
@@ -56,7 +56,11 @@ public class Perceptron extends Thread {
 	 * @param isSigmoid : mode de sortie
 	 * @throws Exception : si erreur a la creation (connect)
 	 */
-	public Perceptron(final int GUI, PipedWriter[] inPipes, double[] inputWeights, double bias, double biasWeight,PipedWriter outpipe, boolean isSigmoid) throws Exception
+	public Perceptron(final int GUI,
+			final PipedWriter[] inPipes, final double[] inputWeights,
+			final double bias, final double biasWeight,
+			final PipedWriter outpipe,
+			final boolean isSigmoid) throws Exception
  	{		 	
 		this.GUI=GUI;
 		this.inputWeights = inputWeights;		
@@ -68,16 +72,7 @@ public class Perceptron extends Thread {
 		inputPipes = new PipedReader[inPipes.length];
 		connect(inPipes,outpipe);
  	}
-	
-	public double getLocalError()
-	{
-		return localError;
-	}
-	
-	public double getOutput()
-	{
-		return activatedPercepTotal;
-	}
+
 	
 	/**
 	 * Function to calculate the output of this perceptron 
@@ -85,7 +80,7 @@ public class Perceptron extends Thread {
 	 * @param inputs : list of double from the differents input
 	 * @return perceptron output
 	 */
-	private double calcOutput(double[] inputs)
+	private double calcOutput(final double[] inputs)
 	{
 		StringBuilder _sb = null;
 		double percepTotal = 0;
@@ -120,6 +115,17 @@ public class Perceptron extends Thread {
 	}
 	
 	
+	
+	public double getLocalError()
+	{
+		return localError;
+	}
+	
+	public double getOutput()
+	{
+		return activatedPercepTotal;
+	}
+	
 	public void calcLocalError(double desiredOutput, double actualOutput){
 		localError = actualOutput - desiredOutput;
 	}
@@ -144,13 +150,14 @@ public class Perceptron extends Thread {
 		return delta;
 	}
 	
+	
 	/**
 	 * Function to connect to input and output stream
 	 * @param inputPipes : inpipe to connect to (get data from)
 	 * @param outPipe  : outpipe to connect to (push data to)
 	 * @throws Exception if we can't connect
 	 */
-	private void connect(PipedWriter[] inputPipes, PipedWriter outPipe) throws Exception{
+	private void connect(final PipedWriter[] inputPipes,final PipedWriter outPipe) throws Exception{
 		System.out.println("Perceptron["+GUI+"] init");
 		try 
 		{
@@ -296,8 +303,10 @@ public class Perceptron extends Thread {
 		disconnect();
 	}
 	
-	
-	
+	/**
+	 * Small main to try out perceptron is behaving well
+	 * @param args
+	 */
 	public static void main(String[] args) {
 		System.out.println("Perception main, quicktest");
 		PipedWriter[] inputPipes = new PipedWriter[2]; //x1 et x2

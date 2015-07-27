@@ -11,7 +11,7 @@ public class Lab3FileReader {
 	private Vector<Vector<Double>> vNormLearningSet;
 	private Vector<Vector<Double>> vNormValidationSet;
 	
-	public Lab3FileReader(String strFilePath, int learningLineVSValidLine) {	
+	public Lab3FileReader(final String strFilePath,final int learningLineVSValidLine) {	
 		vHeaders = new Vector<String>();
 		vLearningSet = new Vector<Vector<Double>>();
 		vValidationSet = new Vector<Vector<Double>>();
