@@ -16,6 +16,12 @@ public class Schema {
 	private PipedWriter finalout;
 	private int GUIcounter = 0;
 	
+	private Perceptron last;
+	
+	public Perceptron getLast() {
+		return last;
+	}
+
 	/**
 	 * Somme des truc retain (pour calcul des weught par retropropagation)
 	 * (Crazy Yummi)
@@ -53,9 +59,20 @@ public class Schema {
 		{
 			permutation[i] = 0;
 		}
+		proglist = new ArrayList<>();
 		this.nbPerceptron = nbPerceptron;
 		this.finalout = finalout;
 		createSchema(inputs);
+	}
+	
+	public void LoadSchema(double[][][] wnex){	
+		final int nblayer = wnex.length; //nb layer
+		for(int i = 0; i < nblayer; i++){
+			final int nbperceptbylayer = wnex[i].length; //nb nbperceptbylayer
+			for(int j = 0; j < nbperceptbylayer; i++){
+				schema.get(i).get(j).setInputWeights(wnex[i][j]); //update tous les poids
+			}	
+		}
 	}
 
 	
@@ -131,6 +148,8 @@ public class Schema {
 				try {
 					Perceptron percep = new Perceptron(GUIcounter++,pipesInJ,LayerOutpipes[i][j]);
 					layer.add(percep);
+					if(sz == 1)
+						last = percep;
 				} catch (Exception e) {
 					System.err.println("Fail to create perceptron DEBUG ME");
 					e.printStackTrace();
@@ -163,11 +182,12 @@ public class Schema {
 	 * Asking all perceptron to stop themself
 	 */
 	public void stop(){
-		for(Propagator cur_prog : proglist)
-			cur_prog.interrupt();
-		
 		if(started == true){
 			started = false;
+			
+			for(Propagator cur_prog : proglist)
+				cur_prog.interrupt();
+			
 			int i=0;
 			while(nbLayer > i){
 				final int nbpercepcouche=nbPerceptron[i];
@@ -206,7 +226,7 @@ public class Schema {
 			i++;
 		}
 	}
-
+	
 	/**
 	 * Function to know how many percept we have in our schema
 	 * @return

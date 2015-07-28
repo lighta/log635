@@ -10,11 +10,13 @@ public class Perceptron extends Thread {
 	
 	private PipedReader[] inputPipes;
 	private double[] inputWeights;
+	public double[] delta;
+	
 	private double bias;
 	private double biasWeight;
 	private PipedWriter outPipe;
 	private double localError = 0;
-	private double activatedPercepTotal;
+	private double activatedPercepTotal = 0;
 	private boolean isSigmoid;
 	private final int GUI;		//unique identifier
 
@@ -31,13 +33,14 @@ public class Perceptron extends Thread {
 	public Perceptron(final int GUI,final PipedWriter[] inPipes,final PipedWriter outPipe) throws Exception
 	{
 		this.GUI=GUI;
-		this.bias = 1;
+		this.bias = 0.5;
 		this.biasWeight = 1;
 		this.outPipe = outPipe;
 		this.isSigmoid = true;
 		
 		inputPipes = new PipedReader[inPipes.length];
 		inputWeights = new double[inPipes.length];
+		delta = new double[inPipes.length];
 		for(int i=0; i < inPipes.length; i++){ // Randomize every weights.
 			inputWeights[i] = Math.random();
 		}
@@ -70,6 +73,7 @@ public class Perceptron extends Thread {
 		this.outPipe = outpipe;	
 		
 		inputPipes = new PipedReader[inPipes.length];
+		delta = new double[inPipes.length];
 		connect(inPipes,outpipe);
  	}
 
@@ -116,11 +120,8 @@ public class Perceptron extends Thread {
 	
 	
 	
-	public double getLocalError(double desiredOutput)
+	public double getLocalError()
 	{
-		if(localError != 0)
-			return localError;
-		calcLocalError(desiredOutput);
 		return localError;
 	}
 	
@@ -129,22 +130,26 @@ public class Perceptron extends Thread {
 	}
 	
 	public void calcLocalError(double desiredOutput){
-		localError = activatedPercepTotal - desiredOutput;
+		localError = desiredOutput - activatedPercepTotal;
 	}
 	
-	public double modifyWeight(double learningFactor, double lastLayerDelat, boolean lastLayer)
+	
+	public double calc_gradient(boolean lastLayer){
+		double grad=1;
+		if(lastLayer){ //derniere couche
+			grad = (localError * activatedPercepTotal * (1 - activatedPercepTotal));
+		}
+		else {
+			grad =  activatedPercepTotal * (1 - activatedPercepTotal);
+		}
+		return grad;
+	}
+	
+	public double modifyWeight(double learningFactor, double grad)
 	{
-		double delta = 0; 
-		int i = 0;
-		if(lastLayer)
-		{
-			delta = learningFactor * (localError * activatedPercepTotal * (1- activatedPercepTotal)) * activatedPercepTotal;
-		}
-		else
-		{
-			delta = ((learningFactor *activatedPercepTotal) * (activatedPercepTotal *  (1- activatedPercepTotal))  * lastLayerDelat);
-		}
+		double delta = learningFactor * grad * activatedPercepTotal;
 		//on update tous nos poid
+		int i=0;
 		while ( i < inputWeights.length){
 			inputWeights[i] += delta;
 			i++;
@@ -290,11 +295,23 @@ public class Perceptron extends Thread {
 		catch (Exception error) 
 		{
 			System.out.println("Perceptron["+GUI+"]:: Interrupted. error="+error);
-			error.printStackTrace();
+			//error.printStackTrace();
 		} 
 		disconnect();
 	}
 	
+	
+	public double[] getInputWeights() {
+		return inputWeights;
+	}
+
+	public void setInputWeights(int i, double iw) {
+		this.inputWeights[i] = iw;
+	}
+	
+	public void setInputWeights(double[] inputWeights) {
+		this.inputWeights = inputWeights;
+	}
 	
 	@Override
 	public String toString() {

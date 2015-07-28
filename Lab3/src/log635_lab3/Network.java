@@ -13,6 +13,7 @@ public class Network {
 	public static int DEF_PRIMITIVE_CNT = 11;	// 11 + 1(quality)
 	public static int[] DEF_PERCNT_BY_LAYER = {11,3,1};
 	public static double DEF_LEARNING_RATE = 0.1;
+	private static Double facteurSeuil = (double) 10000;
 	
 	private double learningRate;
 	private int nbLayer;
@@ -20,6 +21,7 @@ public class Network {
 	private int primitiveCnt;
 	private double allowedError; 
 	public int validationLineRate; 
+	
 	
 	private double derivedNetworkError;
 	private Schema sch;
@@ -134,6 +136,7 @@ public class Network {
 		int nbLayer=sch.getSchema().size();
 		int nbPercept = sch.getTotalPercept();
 		int nbtry = 0;								//to avoid infinite loop
+		sch.displaySchema();
 		sch.start();
 		
 		while(derivedNetworkError > allowedError && maxTry>nbtry) //EQM > Epsilon
@@ -143,13 +146,20 @@ public class Network {
 				final Vector<Double> data = lb3fr.GetNormLearningSetDataRows(i);
 				//System.out.println("data="+data);
 				pushData(data,false);
-				final double res = Utils.readOneSortie(infinal); //waiting schema as finish to compute with that value
-				final double expected = data.lastElement();
-				retroPropagation(sch.getSchema().size()-1, sch.getSchema().get(nbLayer-1).size()-1, 0,expected);
+				final double res = Utils.readOneSortie(infinal); //waiting schema as finish to compute with that value	
+				final double expected = data.lastElement();		//prend la derniere valeur de la ligne
 				
 				//Erreur moyenne quadratique emq = √[(e1² + e2² + … +en²) / n] ;
+				sch.getLast().calcLocalError(expected);
+				final double e = sch.getLast().getLocalError();
+				derivedNetworkError = e*e;
 				derivedNetworkError /= nbPercept;
-				derivedNetworkError = Math.sqrt(derivedNetworkError);	
+				derivedNetworkError = Math.sqrt(derivedNetworkError);
+				
+				ajuste(res, expected);
+				
+				//retroPropagation(sch.getSchema().size()-1, sch.getSchema().get(nbLayer-1).size()-1, 0,expected);
+				
 
 				System.out.println("res="+res+" expected="+expected+" derivedNetworkError="+derivedNetworkError);
 			}
@@ -184,32 +194,137 @@ public class Network {
 		return (derivedNetworkError < allowedError);
 	}
 	
+	
+	private void propageErreur(double erreur) {
+		// System.out.println("propage");
+
+		Perceptron n = sch.getLast();
+		double sortie = n.getOutput();
+		Double deriveFonctionErreur = sortie * (1-sortie);
+		Double delta = deriveFonctionErreur * erreur;
+				
+		for(int i=0; i< n.getInputWeights().length; i++){
+			n.delta[i] = delta;
+		}
+		
+		//get all layers
+		List<List<Perceptron>> tmp_sch = sch.getSchema();
+
+		for (int i=0; i<tmp_sch.size(); i++) {
+			final int nbperc = tmp_sch.get(i).size();
+			for ( int j=0; j<nbperc; j++ ) {
+				Perceptron n2 = tmp_sch.get(i).get(j);
+				double delta2 = this.calculeDelta(n2);
+				for(int k=0; k< n2.getInputWeights().length; k++){
+					n2.delta[k] = delta2;
+				}
+			}
+		}
+		
+		this.updatePoids(tmp_sch);
+
+	}
+	
+	private double calculeDelta(Perceptron neuronne) {
+
+		Double sommation = (double) 0;
+
+		double w[] = neuronne.getInputWeights();
+		double d[] = neuronne.delta;
+		for(int k=0; k< neuronne.getInputWeights().length; k++){
+			sommation += w[k] * d[k];
+		}
+		
+
+		// pour chaque connexion sortie du neuronne la valeur de l'information
+		// est la meme
+		double sortie = neuronne.getOutput();
+
+		Double deriveFonctionErreur = sortie * (1 - sortie);
+
+		Double delta = deriveFonctionErreur * sommation;
+
+		return delta;
+
+	}
+	
+	private void updatePoids(final List<List<Perceptron>> tmp_sch) {
+		for (int i=0; i<tmp_sch.size(); i++) {
+			final int nbperc = tmp_sch.get(i).size();
+			for ( int j=0; j<nbperc; j++ ) {
+				Perceptron n2 = tmp_sch.get(i).get(j);
+				double delta2 = this.calculeDelta(n2);
+				
+				double w[] = n2.getInputWeights();
+				for(int k=0; k< w.length; k++){
+					n2.setInputWeights(k, w[k] + learningRate * n2.delta[k] * n2.getOutput() );
+				}
+			}
+		}
+	}
+	
+	public Double getPourcentageErreur(Double predictedValue, Double desireValue) {
+		return Math.abs( (desireValue  - predictedValue)
+				/ desireValue);
+
+	}
+	
+	public void ajuste(double predictedValue, Double desireValue) {
+		this.propageErreur( (desireValue / facteurSeuil) - (predictedValue / facteurSeuil)   );
+	}
+	
 	// fonction gradient (eq 18)
 	private void retroPropagation(final int layer,final int percept, double permutation,final double expected)
 	{	
 		final List<List<Perceptron>> tmp_sch = sch.getSchema(); //avoid multiple dereference
 		//maj EQM (si on passe 2fous dans le meme percept fuck)
-		final double e = tmp_sch.get(layer).get(percept).getLocalError(expected);
-		if(e!=0) //avoid flush
-			derivedNetworkError = e*e;
 		
 		if(layer == nbLayer-1){
-			double temp = tmp_sch.get(layer).get(percept).modifyWeight(learningRate, 0, true);
-			sch.addPermutation(layer, temp);  
+			//couche de sortie modification du wieght
+			double grad = tmp_sch.get(layer).get(percept).calc_gradient(true);
+			double wkj[] = tmp_sch.get(layer).get(percept).getInputWeights();
+			double ret_grad=0;
+			for(double curw : wkj ){
+				ret_grad += curw*grad;
+			}
+			sch.addPermutation(layer, ret_grad);  
+			tmp_sch.get(layer).get(percept).modifyWeight(learningRate, grad);
 			retroPropagation(layer-1, tmp_sch.get(layer-1).size()-1, 0, 0); //descent couche inf
 		}
 		else if(percept == 0){ //dernier perceptron du layer
 			if(layer == 0){ //derniere couche
-				tmp_sch.get(layer).get(percept).modifyWeight(learningRate, sch.getPermutation(layer + 1), false);
+				double part_grad = tmp_sch.get(layer).get(percept).calc_gradient(false);
+				double grad = part_grad * sch.getPermutation(layer + 1);
+				tmp_sch.get(layer).get(percept).modifyWeight(learningRate, grad);
 			}
 			else {
-				permutation += tmp_sch.get(layer).get(percept).modifyWeight(learningRate, sch.getPermutation(layer + 1), false);
-				sch.addPermutation(layer, permutation);
+				double part_grad = tmp_sch.get(layer).get(percept).calc_gradient(false);
+				double wkj[] = tmp_sch.get(layer).get(percept).getInputWeights();
+				double ret_grad=0;
+				for(double curw : wkj ){
+					ret_grad += curw*part_grad;
+				}
+				sch.addPermutation(layer, ret_grad); // to be or not to be
+				
+				double grad = part_grad * sch.getPermutation(layer + 1);
+				tmp_sch.get(layer).get(percept).modifyWeight(learningRate, grad);
+				
 				retroPropagation(layer-1, tmp_sch.get(layer-1).size()-1, 0, 0); //descent couche inf
 			}
 		}
 		else { //on itere dans le layer
-			permutation += tmp_sch.get(layer).get(percept).modifyWeight(learningRate, sch.getPermutation(layer + 1), false);
+			double part_grad = tmp_sch.get(layer).get(percept).calc_gradient(false);
+			double wkj[] = tmp_sch.get(layer).get(percept).getInputWeights();
+			double ret_grad=0;
+			for(double curw : wkj ){
+				ret_grad += curw*part_grad;
+			}
+			permutation += ret_grad;
+			sch.addPermutation(layer, ret_grad); // to be or not to be
+			
+			double grad = part_grad * sch.getPermutation(layer + 1);
+			tmp_sch.get(layer).get(percept).modifyWeight(learningRate, grad);
+			
 			retroPropagation(layer, percept - 1, permutation, 0); //descent next percepts
 		}
 	}
