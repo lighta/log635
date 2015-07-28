@@ -191,6 +191,7 @@ public class Network {
 			System.out.println("derivedNetworkError="+derivedNetworkError+" allowedError="+allowedError+" nbtry="+nbtry );
 		}
 		sch.stop();
+		FileWriter.write(sch);
 		return (derivedNetworkError < allowedError);
 	}
 	

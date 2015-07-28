@@ -77,6 +77,21 @@ public class Perceptron extends Thread {
 		connect(inPipes,outpipe);
  	}
 
+	public double[] getInputsWeights()
+	{
+		return inputWeights;
+	}
+	
+	public double getBias()
+	{
+		return bias;
+	}
+	
+	public double getBiasWeights()
+	{
+		return biasWeight;
+	}
+	
 	
 	/**
 	 * Function to calculate the output of this perceptron 
